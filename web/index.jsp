@@ -22,6 +22,12 @@
             <input type="submit" name="submit" value="Login">
         </form>
     
+    <p>LOGOUT</p>
+        <form name="logout" action="/ProjectV1/API/Users/logout" method="POST">
+            <br>
+            <input type="submit" name="submit" value="LOGOUT">
+        </form> 
+    
     <p>CREATE GROUP</p>
         <form name="newgroup" action="/ProjectV1/API/Groups/" method="POST">
             Groupname <input type="text" name="groupname"><br>
@@ -33,6 +39,12 @@
         <form name="newgroup" action="/ProjectV1/API/Groups/5/users" method="POST">
             Add user <input type="text" name="userID"><br><br>
             <input type="submit" name="submit" value="Add">
+        </form>
+     <p>MSG TEST</p>
+        <form name="newgroup" action="/ProjectV1/API/Groups/5/users/13/messages" method="POST">
+            Message <input type="text" name="message"><br>
+            <br>
+            <input type="submit" name="submit" value="Send">
         </form> 
     </body>
 </html>

@@ -11,6 +11,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.TreeMap;
 
 /**
@@ -19,12 +21,15 @@ import java.util.TreeMap;
  */
 public class GroupDao {
     private TreeMap<Integer,Group> allgroups;
+    private TreeMap<Integer,Message> allmessages;
     private final UserDao userdao;
     //private TreeMap<Integer, String> usernames;
     
     private GroupDao(){
         //this.allgroups = loadGroups();
         this.allgroups = loadGroups();
+        this.allmessages = new TreeMap<Integer, Message>();
+        this.allmessages.put(1, new Message(1,1,1,"asd",new Date()));
         this.userdao = UserDao.getInstance();
     }
     
@@ -122,4 +127,29 @@ public class GroupDao {
     public Group getGroup(int groupID){
         return allgroups.get(groupID);
     }
+    /*
+    Creates a new message and saves it into users and a groups history
+    */
+    public void createMessage(int userID, int groupID, String msg){
+        if(msg.length() <= 500 && msg.length() > 0 && !msg.equals("") && msg != null){
+            Date timestamp = new Date();
+            int messageID = allmessages.lastKey() + 1;
+        
+        
+            Message message = new Message(userID, groupID, messageID, msg, timestamp);
+
+            userdao.getUser(userID).addMessage(message);
+            allgroups.get(groupID).addMessage(message);
+            allmessages.put(messageID, message);
+            System.out.println("Created message "+message.getMessageID()+" into group "+message.getGroupID()+" by user "+message.getUserID()+" MSG: "+message.getMessage());
+
+            saveGroups();
+            userdao.saveUsers();
+        }
+    }
+    /*
+    public HashMap<Integer, Message> getGroupMessages(int groupID){
+        return allgroups.get(groupID).getGroupmessages();
+    }
+    */
 }

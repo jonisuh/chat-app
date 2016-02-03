@@ -7,10 +7,13 @@ package ResourcePackage;
 
 import ModelPackage.Group;
 import ModelPackage.GroupDao;
+import ModelPackage.Message;
 import ModelPackage.User;
 import ModelPackage.UserDao;
 import java.util.ArrayList;
 import java.util.Map;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.Produces;
@@ -136,5 +139,55 @@ public class GroupsResource {
         }else{
             return null;
         }
+    }
+    
+    @POST
+    @Path("/{groupid}/users/{userid}/messages")
+    public Response createNewMessage(@PathParam("groupid") int groupID, @PathParam("userid") int userID, @Context HttpServletRequest request,@FormParam("message") String msg) {
+       HttpSession session = request.getSession(true);
+       if(!session.isNew()){
+        System.out.println(session.getAttribute("id"));
+
+        int sessionID = (Integer) session.getAttribute("id");
+
+        if(groupdao.getGroup(groupID).getUserlist().containsKey(userID)){
+         if(sessionID == userID){
+             groupdao.createMessage(userID, groupID, msg);
+             return Response.status(200).entity("Created a message.").build();  
+         }else{
+             return Response.status(401).entity("You are not logged in as this user.").build(); 
+         }
+        }else{
+            return Response.status(401).entity("User does not belong in the group.").build(); 
+        }
+       }else{
+           return Response.status(401).entity("User not logged in.").build(); 
+       }
+    }
+    
+    @GET
+    @Path("/{groupid}/messages")
+    @Produces(MediaType.APPLICATION_XML)
+    public ArrayList<Message> getGroupMessages(@PathParam("groupid") int groupID, @Context HttpServletRequest request) {
+       HttpSession session = request.getSession(true);
+       if(!session.isNew()){
+        System.out.println(session.getAttribute("id"));
+        int sessionID = (Integer) session.getAttribute("id");
+
+        if(groupdao.getGroup(groupID).getUserlist().containsKey(sessionID)){
+             Group g = groupdao.getGroup(groupID);
+             ArrayList returnarray = new ArrayList<Message>();
+             for(Map.Entry<Integer,Message> entry : g.getGroupmessages().entrySet()){
+                 returnarray.add(entry.getValue());
+             }        
+             //return Response.status(200).entity(returnarray).build();
+             return returnarray;
+
+        }else{
+            return null;
+        }
+       }else{
+           return null;
+       }
     }
 }
