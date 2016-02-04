@@ -5,10 +5,19 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
+        <script type="text/javascript" src="myScript.js"></script>
         <title>test</title>
     </head>
     <body>
-    <p>REGISTER USER</p>
+        <div class="content">
+        
+            Username: <input type="text" name="name" id="username"><br>
+            Password: <input type="password" name="password" id="password"><br>
+            <button id="loginButton">Login</button>
+            
+        </div>
+    <!--<p>REGISTER USER</p>
         <form name="createuserform" action="/ProjectV1/API/Users/" method="POST">
             Username: <input type="text" name="name"><br>
             Password: <input type="password" name="password"><br>
@@ -45,6 +54,6 @@
             Message <input type="text" name="message"><br>
             <br>
             <input type="submit" name="submit" value="Send">
-        </form> 
+        </form> -->
     </body>
 </html>
