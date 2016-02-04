@@ -17,7 +17,7 @@
             <button id="loginButton">Login</button>
             
         </div>
-    <!--<p>REGISTER USER</p>
+   <!-- <p>REGISTER USER</p>
         <form name="createuserform" action="/ProjectV1/API/Users/" method="POST">
             Username: <input type="text" name="name"><br>
             Password: <input type="password" name="password"><br>

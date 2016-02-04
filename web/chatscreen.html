@@ -13,24 +13,44 @@ and open the template in the editor.
                 border:1px solid black;
                 width: 300px;
                 height: 500px;
+                overflow: hidden;
+                
             }
             #header{
                 border:1px solid black;
             }
             #inputfield{
                 position: absolute;
-                top: 490px;
-                width: 295px;
+                top: 510px;
+                width: 298px;
                 border:1px solid black;
+                
                 
             }
             #inputfield input{
                 width: 80%;
             }
+            .group{
+                border:1px solid black;
+            }
+            .message{
+                border:1px solid black;
+            }                
+            
+            #messageSpace{
+               
+                height: 500px;
+                width: 317px;
+                overflow: scroll;
+                margin-bottom: 25px;
+            }
         </style>
         <div id="chatScreen">
             <div id="header">
                 <div class="username" id="placeholder">
+                    
+                </div>
+                <div class="usergroup" id="groupplaceholder">
                     
                 </div>
             </div>
