@@ -6,62 +6,32 @@ and open the template in the editor.
 -->
 <html>
     <head>
+        <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
+        <script type="text/javascript" src="chatScript.js"></script>
+        <link rel="stylesheet" type="text/css" href="chatCss.css">
     </head>
     <body>
-        <style>
-            #chatScreen{
-                border:1px solid black;
-                width: 300px;
-                height: 500px;
-                overflow: hidden;
-                
-            }
-            #header{
-                border:1px solid black;
-            }
-            #inputfield{
-                position: absolute;
-                top: 510px;
-                width: 298px;
-                border:1px solid black;
-                
-                
-            }
-            #inputfield input{
-                width: 80%;
-            }
-            .group{
-                border:1px solid black;
-            }
-            .message{
-                border:1px solid black;
-            }                
-            
-            #messageSpace{
-               
-                height: 500px;
-                width: 317px;
-                overflow: scroll;
-                margin-bottom: 25px;
-            }
-        </style>
+
         <div id="chatScreen">
             <div id="header">
                 <div class="username" id="placeholder">
-                    
+                    <p>User: <span class="usernamespan"> </span></p>
                 </div>
                 <div class="usergroup" id="groupplaceholder">
+                    <p>Group: <span class="groupnamespan"> </span></p>
                     
+                </div>
+                <div>
+                    <a href="/ProjectV1/chatscreen.html">Home</a> <span id="logout">Logout</span>
                 </div>
             </div>
             <div id="messageSpace">
                 
             </div>
-            <div id="inputfield">
-                <input type="text" name="message" id="message"><button id="sendMessage">Send</button>
-            </div>
-            
+           
         </div>
-        
+        <div id="inputfield">
+                <input type="text" name="message" id="message"><button id="sendMessage">Send</button>
+        </div>
     </body>
 </html>

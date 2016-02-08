@@ -15,6 +15,11 @@ $(document).ready(function() {
                }
             }
             ,success: function(loginResponse){
+                document.cookie="userID="+loginResponse;
+                
+                window.location.href = "/ProjectV1/chatscreen.html";
+                /*
+            
                 $(".content").load( "/ProjectV1/chatscreen.html", function() {
                     $.ajax({
                     type: "GET",
@@ -43,9 +48,26 @@ $(document).ready(function() {
                     });
                     
                     $("#placeholder").attr("id",loginResponse);
+                    $("#sendMessage").click(function(){
+                       var message = $("#message").val();
+                       $("#message").val("");
+                       var userID = $(".username").attr("id");
+                       var groupID = $(".usergroup").attr("id");
+
+                       $.ajax({
+                           type: "POST",
+                           url: "/ProjectV1/API/Groups/"+groupID+"/users/"+userID+"/messages/",
+                           data: {message: message}
+                           ,success: function(messageCreation){
+                                
+                               }
+                           });
+                    });                   
                 });
+             */
             }
         });
+        /*
         $(document).on('click', '.group', function(){
             var groupID = $(this).attr("id");
             var groupIDSplit = groupID.split("_");
@@ -73,7 +95,9 @@ $(document).ready(function() {
                         
                     }
             });
-
+            
         });
+       */
     });
+
 });

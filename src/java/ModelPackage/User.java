@@ -62,8 +62,8 @@ public class User implements Serializable {
         this.password = password;
     }
     @XmlElement
-    public int getUserID() {
-        return userID;
+    public int getUserID() {   
+        return userID;       
     }
     
 }

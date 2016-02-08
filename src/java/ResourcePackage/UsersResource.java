@@ -1,6 +1,8 @@
 
 package ResourcePackage;
 
+import ModelPackage.Group;
+import ModelPackage.Message;
 import ModelPackage.User;
 import ModelPackage.UserDao;
 import java.util.ArrayList;
@@ -73,13 +75,28 @@ public class UsersResource {
         userdao.deleteUser(userid);
         return Response.status(200).entity("User "+userid+" deleted").build();
     }
-    /*
-    @POST
-    @Path("/{userid}/groups/{groupid}/messages")
-    public Response createMessage(@PathParam("userid") int userid) {
-        
+    
+    @GET
+    @Path("/{userid}/messages")
+    @Produces(MediaType.APPLICATION_XML)
+    public ArrayList<Message> getUserMessages(@PathParam("userid") int userid) {
+        ArrayList returnarray = new ArrayList<Message>();
+        for(Map.Entry<Integer,Message> entry : userdao.getUser(userid).getUsermessages().entrySet()){
+            returnarray.add(entry.getValue());
+        }        
+        return returnarray;
     }
-    */
+    
+    @GET
+    @Path("/{userid}/groups")
+    @Produces(MediaType.APPLICATION_XML)
+    public ArrayList<Group> getUserGroups(@PathParam("userid") int userid) {
+        ArrayList returnarray = new ArrayList<Group>();
+        for(Map.Entry<Integer,Group> entry : userdao.getUser(userid).getGrouplist().entrySet()){
+            returnarray.add(entry.getValue());
+        }        
+        return returnarray;
+    }
     
     @POST
     @Path("/login")
@@ -90,7 +107,7 @@ public class UsersResource {
                 session.setAttribute("username", name);
                 session.setAttribute("id", userdao.getUserByName(name).getUserID());
                 session.setAttribute("status", "authenticated");
-            return Response.status(200).entity("User logged in").build();
+            return Response.status(200).entity(session.getAttribute("id")).build();
         }else{
             return Response.status(401).entity("Invalid login.").build();
         }

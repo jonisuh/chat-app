@@ -28,8 +28,7 @@ public class GroupDao {
     private GroupDao(){
         //this.allgroups = loadGroups();
         this.allgroups = loadGroups();
-        this.allmessages = new TreeMap<Integer, Message>();
-        this.allmessages.put(1, new Message(1,1,1,"asd",new Date()));
+        this.allmessages = loadMessages();
         this.userdao = UserDao.getInstance();
     }
     
@@ -74,6 +73,41 @@ public class GroupDao {
         }
         return groupmap;
     }
+    private void saveMessages(){
+        try {
+                FileOutputStream out = new FileOutputStream("messages.ser");
+                ObjectOutputStream obout = new ObjectOutputStream(out);
+                obout.writeObject(this.allmessages);
+                obout.close();
+        } catch (FileNotFoundException e) {
+                System.out.println("Could not open messages.ser");
+                e.printStackTrace();
+        } catch (IOException e) {
+                System.out.println("Error writing into file");
+                e.printStackTrace();
+        }
+    }
+    
+    private TreeMap<Integer, Message> loadMessages(){
+        TreeMap<Integer,Message> messagemap = null;
+        try {
+                FileInputStream in = new FileInputStream("messages.ser");
+                ObjectInputStream obin = new ObjectInputStream(in);
+                messagemap = (TreeMap<Integer,Message>)obin.readObject();
+                obin.close();
+        } catch (FileNotFoundException e) {
+                System.out.println("Could not open messages.ser");
+                e.printStackTrace();
+        } catch (IOException e) {
+                System.out.println("Error reading file");
+                e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+                System.out.println("Error reading object");
+                e.printStackTrace();
+        }
+        return messagemap;
+    }
+    
     /*
     Creates a new group and puts the user who created the group in the admin and user list
     */
@@ -145,6 +179,7 @@ public class GroupDao {
 
             saveGroups();
             userdao.saveUsers();
+            saveMessages();
         }
     }
     /*

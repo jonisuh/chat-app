@@ -7,7 +7,7 @@ import java.util.Date;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-@XmlRootElement
+@XmlRootElement(name="messageroot")
 public class Message implements Serializable {
     private static final long serialVersionUID = 1L;
     private int messageID;

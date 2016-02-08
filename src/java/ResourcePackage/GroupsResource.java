@@ -144,8 +144,8 @@ public class GroupsResource {
     @POST
     @Path("/{groupid}/users/{userid}/messages")
     public Response createNewMessage(@PathParam("groupid") int groupID, @PathParam("userid") int userID, @Context HttpServletRequest request,@FormParam("message") String msg) {
-       HttpSession session = request.getSession(true);
-       if(!session.isNew()){
+       HttpSession session = request.getSession(false);
+       if(session != null){
         System.out.println(session.getAttribute("id"));
 
         int sessionID = (Integer) session.getAttribute("id");
@@ -169,8 +169,8 @@ public class GroupsResource {
     @Path("/{groupid}/messages")
     @Produces(MediaType.APPLICATION_XML)
     public ArrayList<Message> getGroupMessages(@PathParam("groupid") int groupID, @Context HttpServletRequest request) {
-       HttpSession session = request.getSession(true);
-       if(!session.isNew()){
+       HttpSession session = request.getSession(false);
+       if(session != null){
         System.out.println(session.getAttribute("id"));
         int sessionID = (Integer) session.getAttribute("id");
 

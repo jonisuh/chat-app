@@ -1,0 +1,79 @@
+body{
+    font-family: arial;
+}
+#chatScreen{
+    border:1px solid black;
+    width: 300px;
+    height: 500px;
+    overflow: hidden;
+
+}
+#header{
+    
+    border:1px solid black;
+    height: 40px;
+    background-color: lightblue;
+}
+#header p{
+    margin: 0;
+}
+
+#inputfield{
+    position: absolute;
+    top: 509px;
+    width: 300px;
+    border:1px solid black;
+
+
+}
+#inputfield input{
+    padding: 0px;
+    width: 243px;
+    height: 20px;
+}
+#inputfield button{
+    width: 50px;
+    height: 25.5px;
+}
+.group{
+    margin-bottom: 3px;
+    border:1px solid black;
+}
+.message{
+    border:1px solid black;
+    border-radius: 5px;
+    margin-bottom: 2px;
+    width: 80%;
+    background-color: gainsboro;
+}                
+.message p{
+    margin-left: 5%;
+    width: 90%;
+    min-height: 20px;
+    word-wrap: break-word;
+    
+}
+.mymessage{
+    margin-left: 20%;
+    text-align: right;
+    background-color: teal;
+}
+.timestamp{
+    font-size: 10px;
+}
+#messageSpace{
+
+    height: 98%;
+    width: 317px;
+    overflow-y: scroll;
+}
+.username{
+   display: inline-block;
+   float: left;
+   width: 50%;
+}
+.usergroup{
+   display: inline-block;
+   float: left;
+   width: 50%; 
+}
