@@ -116,14 +116,11 @@ public class UserDao {
     }
     //Get all users
     public TreeMap<Integer, User> getUsers(){
-        System.out.println("Returning users");
         return this.allusers;
     }
     
     //Get one user
     public User getUser(int userID){
-        System.out.println("Returning user "+userID);
-        System.out.println(allusers.get(userID).getGrouplist().keySet());
         return allusers.get(userID);
     }
     /*

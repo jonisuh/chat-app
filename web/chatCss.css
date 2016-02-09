@@ -62,8 +62,8 @@ body{
     font-size: 10px;
 }
 #messageSpace{
-
-    height: 98%;
+    overflow-x: hidden;
+    height: 92%;
     width: 317px;
     overflow-y: scroll;
 }
@@ -76,4 +76,15 @@ body{
    display: inline-block;
    float: left;
    width: 50%; 
+}
+#groupfunctions{
+    display: none;
+    background-color: lightblue;
+    position: absolute;
+    width: 100px;
+    border:1px solid black;
+    height: 200px;
+}
+#groupfunctions input{
+  width: 100%;  
 }

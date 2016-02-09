@@ -76,6 +76,7 @@ public class GroupDao {
     private void saveMessages(){
         try {
                 FileOutputStream out = new FileOutputStream("messages.ser");
+                
                 ObjectOutputStream obout = new ObjectOutputStream(out);
                 obout.writeObject(this.allmessages);
                 obout.close();

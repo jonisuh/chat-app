@@ -42,9 +42,9 @@ public class GroupsResource {
     
     @GET
     @Produces(MediaType.APPLICATION_XML)
-    public ArrayList<Group> getGroupsXML() {
+    public ArrayList<Group> getGroupsXML() {       
         ArrayList returnarray = new ArrayList<Group>();
-        for(Map.Entry<Integer,Group> entry : groupdao.getGroups().entrySet()){
+        for(Map.Entry<Integer,Group> entry : groupdao.getGroups().entrySet()){   
             returnarray.add(entry.getValue());
         }        
         return returnarray;
@@ -168,7 +168,7 @@ public class GroupsResource {
     @GET
     @Path("/{groupid}/messages")
     @Produces(MediaType.APPLICATION_XML)
-    public ArrayList<Message> getGroupMessages(@PathParam("groupid") int groupID, @Context HttpServletRequest request) {
+    public ArrayList<MessageXML> getGroupMessages(@PathParam("groupid") int groupID, @Context HttpServletRequest request) {
        HttpSession session = request.getSession(false);
        if(session != null){
         System.out.println(session.getAttribute("id"));
@@ -176,9 +176,19 @@ public class GroupsResource {
 
         if(groupdao.getGroup(groupID).getUserlist().containsKey(sessionID)){
              Group g = groupdao.getGroup(groupID);
-             ArrayList returnarray = new ArrayList<Message>();
+             ArrayList returnarray = new ArrayList<MessageXML>();
              for(Map.Entry<Integer,Message> entry : g.getGroupmessages().entrySet()){
-                 returnarray.add(entry.getValue());
+                 Message msg = entry.getValue();
+                 
+                 String username = userdao.getUser(msg.getUserID()).getUsername();
+                 String message = msg.getMessage();
+                 int userID = msg.getUserID();
+                 int msggroupID = msg.getGroupID();
+                 int messageID = msg.getMessageID();
+                 String timestamp = msg.getTimestamp();
+                 
+                 MessageXML newMsg = new MessageXML(userID,msggroupID,messageID,username,message,timestamp);
+                 returnarray.add(newMsg);
              }        
              //return Response.status(200).entity(returnarray).build();
              return returnarray;

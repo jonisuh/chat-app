@@ -91,6 +91,7 @@ $(document).ready(function () {
                     var timestamp = $(this).find("timestamp").text();
                     //Getting the username
                     var messageclasses = "message";
+                    
                     $.ajax({
                         type: "GET",
                         async: false,
@@ -100,19 +101,16 @@ $(document).ready(function () {
                             var senderName = $(senderInfo).find("username").text();
                             if (senderID === userID) {
                                 messageclasses = "message mymessage"
+                                
                             }
                             $("#messageSpace").append("<div class='" + messageclasses + "' id='message_" + messageID + "'><p>" + message + "</p><p>" + senderName + " <span class='timestamp'>" + timestamp + "</span></p></div>");
                         }
                     });
-
                 });
                 scrollToBot();
                 checkMessages(groupIDSplit[1]);   
             }           
-        });
-        
-        
-     
+        });    
     });
     function loadMessages(groupID){
         var messageAttrID = $("#messageSpace div:last").attr("id");
@@ -151,7 +149,7 @@ $(document).ready(function () {
                 });
                 scrollToBot();
                 checkMessages(groupID);   
-            }           
+            }        
         });
     }
     
@@ -166,6 +164,7 @@ $(document).ready(function () {
                 var messageID = $lastmessage.find("messageID").text();
                 
                 var messageAttrID = $("#messageSpace div:last").attr("id");
+                //if(messageAttrID === null || )
                 var messageIDSplit = messageAttrID.split("_");
                 var latestMessage = messageIDSplit[1];
                 
@@ -176,11 +175,11 @@ $(document).ready(function () {
                       checkMessages(groupID);  
                     }, 1000);                   
                 }
-            }           
+            }         
         });
     }
     
-    $("#logout").click(function () {
+    $("#logout").click(function () {      
         $.ajax({
             type: "POST",
             url: "/ProjectV1/API/Users/logout",
@@ -190,6 +189,9 @@ $(document).ready(function () {
                 window.location.href = "/ProjectV1/index.jsp";
             }
         });
+        
     });
-
+    $(".groupnamespan").click(function () {
+        $("#groupfunctions").toggle();
+    });
 });

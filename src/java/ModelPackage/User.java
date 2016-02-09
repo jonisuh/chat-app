@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 @XmlRootElement
 public class User implements Serializable {
@@ -56,11 +57,11 @@ public class User implements Serializable {
     public String getPassword() {
         return password;
     }
-
-    
+    @XmlTransient
     public void setPassword(String password) {
         this.password = password;
     }
+    
     @XmlElement
     public int getUserID() {   
         return userID;       
