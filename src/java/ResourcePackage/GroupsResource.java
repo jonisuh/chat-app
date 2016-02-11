@@ -11,7 +11,10 @@ import ModelPackage.Message;
 import ModelPackage.User;
 import ModelPackage.UserDao;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.ws.rs.core.Context;
@@ -55,8 +58,8 @@ public class GroupsResource {
     public String createGroup(@FormParam("groupname") String groupname,@FormParam("groupstarterID") int starterID) {
         if(userdao.getUsers().containsKey(starterID)){
             User groupstarter = userdao.getUser(starterID);
-            groupdao.createGroup(groupname, groupstarter);
-            return "Group created";
+            int groupID = groupdao.createGroup(groupname, groupstarter);
+            return ""+groupID;
         }else{
             return "No user with that ID exists.";
         }
@@ -176,7 +179,8 @@ public class GroupsResource {
 
         if(groupdao.getGroup(groupID).getUserlist().containsKey(sessionID)){
              Group g = groupdao.getGroup(groupID);
-             ArrayList returnarray = new ArrayList<MessageXML>();
+             ArrayList returnarray = new ArrayList<MessageXML>();            
+             
              for(Map.Entry<Integer,Message> entry : g.getGroupmessages().entrySet()){
                  Message msg = entry.getValue();
                  
@@ -190,7 +194,9 @@ public class GroupsResource {
                  MessageXML newMsg = new MessageXML(userID,msggroupID,messageID,username,message,timestamp);
                  returnarray.add(newMsg);
              }        
+             
              //return Response.status(200).entity(returnarray).build();
+             Collections.sort(returnarray);
              return returnarray;
 
         }else{
@@ -199,5 +205,32 @@ public class GroupsResource {
        }else{
            return null;
        }
+    }
+    @GET
+    @Path("/{groupid}/messages/latest")
+    public String getLatestMessage(@PathParam("groupid") int groupID, @Context HttpServletRequest request){
+       HttpSession session = request.getSession(false);
+       if(session != null){
+        System.out.println(session.getAttribute("id"));
+        int sessionID = (Integer) session.getAttribute("id");
+
+        if(groupdao.getGroup(groupID).getUserlist().containsKey(sessionID)){
+             Group g = groupdao.getGroup(groupID);
+             int latestID;
+             if(!g.getGroupmessages().isEmpty()){
+                latestID = Collections.max(g.getGroupmessages().keySet());
+             }else{
+                 latestID = 0;
+             }
+             
+             //return Response.status(200).entity(returnarray).build();
+             return ""+latestID;
+
+        }else{
+            return null;
+        }
+       }else{
+           return null;
+       } 
     }
 }

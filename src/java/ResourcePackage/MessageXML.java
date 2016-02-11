@@ -8,7 +8,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name="messageroot")
-public class MessageXML implements Serializable {
+public class MessageXML implements Serializable, Comparable<MessageXML> {
     private static final long serialVersionUID = 1L;
     private int messageID;
     private int userID;
@@ -55,5 +55,13 @@ public class MessageXML implements Serializable {
     public String getUsername(){
         return username;
     }
+
+    @Override
+    public int compareTo(MessageXML msg) {
+        int compareID = msg.getMessageID();
+        
+        return this.messageID-compareID;
+    }
+
    
 }

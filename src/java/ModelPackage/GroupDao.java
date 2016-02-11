@@ -112,7 +112,7 @@ public class GroupDao {
     /*
     Creates a new group and puts the user who created the group in the admin and user list
     */
-    public void createGroup(String groupname, User starter){
+    public int createGroup(String groupname, User starter){
         int groupID = allgroups.lastKey() + 1;
         Group g = new Group(groupname, groupID);
         allgroups.put(groupID, g);
@@ -122,7 +122,7 @@ public class GroupDao {
         saveGroups();
         userdao.saveUsers();
         //DEBUG
-        System.out.println("Group "+g.getGroupName()+" created. User "+starter.getUsername()+" added as admin");
+        return groupID;
     }
     /*
     Adds user to groups userlist and the group to users grouplist

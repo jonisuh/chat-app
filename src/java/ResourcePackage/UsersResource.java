@@ -98,6 +98,13 @@ public class UsersResource {
         return returnarray;
     }
     
+    @GET
+    @Path("/{userid}/name")
+    @Produces(MediaType.APPLICATION_XML)
+    public String getUserName(@PathParam("userid") int userid) {
+        return userdao.getUser(userid).getUsername();
+    }
+    
     @POST
     @Path("/login")
     public Response loginUser(@FormParam("name") String name, @FormParam("password") String password, @Context HttpServletRequest request) {

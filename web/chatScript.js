@@ -59,7 +59,7 @@ $(document).ready(function () {
     function scrollToBot(){
         var height = 0;
         $('.message').each(function(i, value){
-            height += parseInt($(this).height());
+            height += parseInt($(this).height()) + 2;
         });
 
         height += '';
@@ -74,9 +74,8 @@ $(document).ready(function () {
         $(".groupnamespan").html($(this).text());
         $("#messageSpace").html(" ");
         
-        //var userID = $(".username").attr("id");
-        
-        
+        //var userID = $(".username").attr("id"); 
+       
         $.ajax({
             type: "GET",
             url: "/ProjectV1/API/Groups/" + groupIDSplit[1] + "/messages/",
@@ -94,7 +93,6 @@ $(document).ready(function () {
                     
                     $.ajax({
                         type: "GET",
-                        async: false,
                         url: "/ProjectV1/API/Users/" + senderID + "/",
                         dataType: 'xml'
                         , success: function (senderInfo) {
@@ -108,7 +106,10 @@ $(document).ready(function () {
                     });
                 });
                 scrollToBot();
-                checkMessages(groupIDSplit[1]);   
+                //checkMessages(groupIDSplit[1]);
+                window.setInterval(function(){
+                   checkMessages(groupIDSplit[1]); 
+                }, 100);
             }           
         });    
     });
@@ -130,11 +131,10 @@ $(document).ready(function () {
                     var timestamp = $(this).find("timestamp").text();
                     
                     if(parseInt(messageID) > parseInt(latestMessage)){
-                    //Getting the username
+                    
                         var messageclasses = "message";
                         $.ajax({
                             type: "GET",
-                            async: false,
                             url: "/ProjectV1/API/Users/" + senderID + "/",
                             dataType: 'xml'
                             , success: function (senderInfo) {
@@ -147,8 +147,7 @@ $(document).ready(function () {
                         });
                     }
                 });
-                scrollToBot();
-                checkMessages(groupID);   
+                scrollToBot(); 
             }        
         });
     }
@@ -156,25 +155,22 @@ $(document).ready(function () {
     function checkMessages(groupID){
         $.ajax({
             type: "GET",
-            url: "/ProjectV1/API/Groups/" + groupID + "/messages/",
-            dataType: 'xml'
-            , success: function (messages) {
-                //$messages = $( messages );
-                var $lastmessage = $(messages).find('messageroot:last');                
-                var messageID = $lastmessage.find("messageID").text();
+            url: "/ProjectV1/API/Groups/" + groupID + "/messages/latest/",
+            success: function (latestmessageID) {
                 
                 var messageAttrID = $("#messageSpace div:last").attr("id");
-                //if(messageAttrID === null || )
-                var messageIDSplit = messageAttrID.split("_");
-                var latestMessage = messageIDSplit[1];
+                var latestMessage;
                 
-                if(parseInt(messageID) > parseInt(latestMessage)){
-                    loadMessages(groupID);
+                if(!messageAttrID){
+                    latestMessage = "0";
                 }else{
-                    setTimeout(function(){
-                      checkMessages(groupID);  
-                    }, 1000);                   
+                  var messageIDSplit = messageAttrID.split("_");
+                  latestMessage = messageIDSplit[1];
                 }
+  
+                if(parseInt(latestmessageID) > parseInt(latestMessage)){
+                    loadMessages(groupID);
+                }               
             }         
         });
     }
