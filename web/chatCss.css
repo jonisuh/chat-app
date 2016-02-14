@@ -174,7 +174,6 @@ ul#menu li.current a, ul#menu li:hover a{
     background-color: gainsboro;
 }
 .message{
-    
     border-radius: 5px;
     margin-bottom: 2px;
     width: 80%;
@@ -203,17 +202,23 @@ ul#menu li.current a, ul#menu li:hover a{
 }
 #inputfield{
     height: 36px;
+    width: 296px;
+    position: absolute;
 }
 #inputfield textarea{
+    vertical-align: top;
+    
     padding: 2px;
-    width: 80%;
+    width: 240px;
     height: 30px;
     resize: none;
 }
 #sendMessage{
+    border-radius: 0;
+    float: right;
     vertical-align: top;
     height: 36px;
-    width: 18%;
+    width: 50px;
 }
 
 .username{

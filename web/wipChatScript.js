@@ -1,7 +1,11 @@
 $(document).ready(function () {
+    var userID = sessionStorage.userID;
+    var basicCredentials = sessionStorage.credentials;
+    console.log(sessionStorage.credentials);
+    console.log("USER ID: "+userID);
+    console.log("Session storage: "+sessionStorage.userID);
     
-    var userID = getCookie("userID");
-    var wsUri = "ws://localhost:8080/ProjectV1/chatendpoint";
+    var wsUri = "ws://"+location.host+"/ProjectV1/chatendpoint";
     var websocket;
     var wsCheck = true;
     var pollInterval;
@@ -12,6 +16,9 @@ $(document).ready(function () {
         $.ajax({
             type: "GET",
             url: "/ProjectV1/API/Users/" + userID + "/",
+            headers:{
+                "Authorization": basicCredentials
+            },
             dataType: 'xml'
             , success: function (userInformation) {
                 var userName = $(userInformation).find("username");
@@ -23,12 +30,13 @@ $(document).ready(function () {
         $.ajax({
             type: "GET",
             url: "/ProjectV1/API/Users/" + userID + "/groups/",
+            headers:{
+                "Authorization": basicCredentials
+            },
             dataType: 'xml'
             , success: function (groupInformation) {
-                $("#grouplist").append("<h2>Groups<span id='createGroup'> +</span></h2>");
-                $("#grouplist").append("<div id='newGroup'></div>");
+                $("#grouplist").append("<h2>Groups</h2>");
 
-                $("#newGroup").load("newgroup.html");
                 $("#grouplist").append("<div id='groupWrapper'>");
                 $groups = $(groupInformation);
                 $(groupInformation).find("group").each(function () {
@@ -41,12 +49,20 @@ $(document).ready(function () {
         });
         $("#placeholder").attr("id", userID);
     }
-    
+    /* OLD
     $(document).on('click', '#createGroup', function () {
        $("#newGroup").toggle();
        $("#groupWrapper").toggle();
        
     });
+    */
+    //WIP
+    $("#message").keyup(function(){
+        while($(this).outerHeight() < this.scrollHeight + parseFloat($(this).css("borderTopWidth")) + parseFloat($(this).css("borderBottomWidth"))) {
+            $(this).height($(this).height()+1);
+        };
+    });
+    
     //Send message by pressing enter
     $('#message').keypress(function (e) {
     if(e.which == 13)  // the enter key code
@@ -55,10 +71,12 @@ $(document).ready(function () {
        return false;  
      }
     }); 
+    
     //Sending a message
     $("#sendMessage").click(function () {
         var message = $("#message").val();
         $("#message").val("");
+        $("#message").height(30);
         if(message != ""){
             var userID = $(".username").attr("id");
             var currentgroupID = $(".usergroup").attr("id");
@@ -66,6 +84,9 @@ $(document).ready(function () {
             $.ajax({
                 type: "POST",
                 url: "/ProjectV1/API/Groups/" + currentgroupID + "/users/" + userID + "/messages/",
+                headers:{
+                    "Authorization": basicCredentials
+                },
                 data: {message: message}
                 , success: function (messageCreation) {
                     if(wsCheck === true){
@@ -74,10 +95,11 @@ $(document).ready(function () {
                 }
             });
         }else{
-            
+            //TODO: Error message
         }
     });
     
+    //Not needed?
     //Returns cookie value
     function getCookie(cname) {
         var name = cname + "=";
@@ -103,9 +125,7 @@ $(document).ready(function () {
         
     }
     
-    
-    
-    
+
     
     //Loads a groups
     $(document).on('click', '.group', function () {
@@ -121,12 +141,15 @@ $(document).ready(function () {
         $("#userlist").html(" ");
         $("#message").val("");
         //Loading users
+        
         $.ajax({
             type: "GET",
             url: "/ProjectV1/API/Groups/" + groupIDSplit[1] + "/users/",
-            dataType: 'xml'
-            , success: function (users) {
-                
+            dataType: 'xml',
+            headers:{
+                "Authorization": basicCredentials
+            }
+            ,success: function (users) {  
                 $('user', users).each(function () {
                     
                     var thisuserID = $(this).find("userID").text();
@@ -134,10 +157,7 @@ $(document).ready(function () {
                     if(parseInt(thisuserID) === parseInt(userID)){
                         thisuserName = "Me";
                     }                  
-                    $("#userlist").append("<div class='usercontainer' id='user_"+thisuserID+"'><p>"+thisuserName+"</p></div>")
-                    
-                    
-                    
+                    $("#userlist").append("<div class='usercontainer' id='user_"+thisuserID+"'><p>"+thisuserName+"</p></div>") 
                 });
             }    
          });  
@@ -146,8 +166,11 @@ $(document).ready(function () {
         $.ajax({
             type: "GET",
             url: "/ProjectV1/API/Groups/" + groupIDSplit[1] + "/messages/",
-            dataType: 'xml'
-            , success: function (messages) {
+            dataType: 'xml',
+            headers:{
+                "Authorization": basicCredentials
+            },
+            success: function (messages) {
                 //$messages = $( messages );
                 
                 $('messageroot', messages).each(function () {
@@ -184,8 +207,7 @@ $(document).ready(function () {
                         console.log('Closing');
                     };
                     
-                }       
-                       
+                }                  
         });
 
     });
@@ -193,11 +215,10 @@ $(document).ready(function () {
         console.log("WebSocket failed, using polling.");
         
         //Closing existing polling
-        console.log("Closed poll "+pollInterval);
-        clearInterval(pollInterval);
-        
-        pollInterval = null;  
-        
+        if(pollInterval){
+            console.log("Closed poll "+pollInterval);
+            clearInterval(pollInterval);
+        }
         pollInterval = setInterval(function(){
             checkMessages(groupID);
         }, 500);
@@ -209,6 +230,7 @@ $(document).ready(function () {
         loadMessages(event.data);
     }
     function sendMsg(msg) {
+        
         websocket.send(msg);
     }
 
@@ -227,9 +249,10 @@ $(document).ready(function () {
         $.ajax({
             type: "GET",
             url: "/ProjectV1/API/Groups/" + groupID + "/messages/latest/",
+            headers:{
+                "Authorization": basicCredentials
+            },
             success: function (latestmessageID) {
-                
-                
                 var messageAttrID = $("#messageSpace div:last").attr("id");
                 var latestMessage;
                 
@@ -259,13 +282,15 @@ $(document).ready(function () {
               var messageIDSplit = messageAttrID.split("_");
               latestMessage = messageIDSplit[1];
             }
-            
-            
+
             $.ajax({
                 type: "GET",
                 url: "/ProjectV1/API/Groups/" + groupID + "/messages/",
-                dataType: 'xml'
-                , success: function (messages) {
+                dataType: 'xml',
+                headers:{
+                    "Authorization": basicCredentials
+                },
+                success: function (messages) {
                     $('messageroot', messages).each(function () {                       
                         var messageID = $(this).find("messageID").text();
                         if(parseInt(messageID) > parseInt(latestMessage)){
@@ -308,16 +333,9 @@ $(document).ready(function () {
     
     
     $("#logout").click(function () {    
-        $.ajax({
-            type: "POST",
-            url: "/ProjectV1/API/Users/logout",
-            success: function (logoutstatus) {
-                
-                document.cookie="userID=; expires=Thu, 01 Jan 1970 00:00:00 UTC";
-                window.location.href = "/ProjectV1/index.jsp";
-            }
-        });
-        
+        sessionStorage.removeItem('userID');
+        sessionStorage.removeItem('credentials');
+        window.location.href = "/ProjectV1/";   
     });
     
     //WIP

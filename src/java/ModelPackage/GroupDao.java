@@ -14,7 +14,6 @@ import java.io.ObjectOutputStream;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.TreeMap;
-
 /**
  *
  * @author Joni
@@ -170,7 +169,7 @@ public class GroupDao {
             Date timestamp = new Date();
             int messageID = allmessages.lastKey() + 1;
         
-        
+            
             Message message = new Message(userID, groupID, messageID, msg, timestamp);
 
             userdao.getUser(userID).addMessage(message);

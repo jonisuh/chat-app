@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+
+
 import javax.websocket.EncodeException;
 import javax.websocket.OnClose;
 import javax.websocket.OnMessage;
@@ -14,12 +16,13 @@ import javax.websocket.server.ServerEndpoint;
 
 @ServerEndpoint("/chatendpoint")
 public class ChatEndPoint {
-
+    
     private static Set<Session> wsSessions = Collections.synchronizedSet(new HashSet<Session>());
 
     @OnMessage
     public void onMessage(String message) throws IOException, EncodeException {
         for (Session wsSession : wsSessions) {
+            System.out.println("Sending message to "+wsSession);
             wsSession.getBasicRemote().sendObject(message);
         }
     }

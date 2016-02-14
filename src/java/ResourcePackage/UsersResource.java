@@ -6,9 +6,10 @@ import ModelPackage.Message;
 import ModelPackage.User;
 import ModelPackage.UserDao;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.Produces;
@@ -20,6 +21,8 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PUT;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.core.GenericEntity;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -54,48 +57,133 @@ public class UsersResource {
     @GET
     @Path("/{userid}")
     @Produces(MediaType.APPLICATION_XML)
-    public User getUserXML(@PathParam("userid") int userid) {
+    public Response getUserXML(@PathParam("userid") int userid, @Context HttpHeaders headers) {
+        
         if(userdao.getUsers().containsKey(userid)){
-            return userdao.getUser(userid);
+            if(headers.getRequestHeaders().keySet().contains("authorization")){
+                String authCredentials = headers.getRequestHeader("authorization").get(0);
+                boolean authResult = userdao.authenticateUser(authCredentials);
+                int myID = userdao.getUserByName(userdao.decodeUsername(authCredentials)).getUserID();
+                if(authResult && myID == userid){
+                    return Response.status(200).entity(userdao.getUser(userid)).build(); 
+                }else{
+                   return Response.status(401).entity("Authorization failed.").build(); 
+                }
+            }else{
+                return Response.status(401).entity("Authorization failed.").build();
+            }
         }else{
-            return null;
+            return Response.status(404).entity("User not found").build();
         }
     }
     
     @PUT
     @Path("/{userid}")
-    public Response updateUser(@PathParam("userid") int userid,@FormParam("name") String name) {
-        userdao.updateUser(userid, name);
-        return Response.status(200).entity("Updated user"+userid+" username to "+name).build();
+    public Response updateUser(@PathParam("userid") int userid,@FormParam("name") String name, @Context HttpHeaders headers) {
+        
+        if(userdao.getUsers().containsKey(userid)){
+            if(headers.getRequestHeaders().keySet().contains("authorization")){
+                String authCredentials = headers.getRequestHeader("authorization").get(0);
+                boolean authResult = userdao.authenticateUser(authCredentials);
+                int myID = userdao.getUserByName(userdao.decodeUsername(authCredentials)).getUserID();
+                
+                if(authResult && myID == userid){
+                    userdao.updateUser(userid, name);
+                    return Response.status(200).entity("Updated user"+userid+" username to "+name).build();
+                }else{
+                   return Response.status(401).entity("Authorization failed.").build(); 
+                }
+            }else{
+                return Response.status(401).entity("Authorization failed.").build();
+            }
+        }else{
+           return Response.status(404).entity("User not found").build();
+        }
     }
     
     @DELETE
     @Path("/{userid}")
-    public Response deleteUser(@PathParam("userid") int userid) {
-        userdao.deleteUser(userid);
-        return Response.status(200).entity("User "+userid+" deleted").build();
+    public Response deleteUser(@PathParam("userid") int userid, @Context HttpHeaders headers) {
+       if(userdao.getUsers().containsKey(userid)){
+            if(headers.getRequestHeaders().keySet().contains("authorization")){
+                String authCredentials = headers.getRequestHeader("authorization").get(0);
+                boolean authResult = userdao.authenticateUser(authCredentials);
+                int myID = userdao.getUserByName(userdao.decodeUsername(authCredentials)).getUserID();
+                if(authResult && myID == userid){
+                    userdao.deleteUser(userid);
+                    return Response.status(200).entity("User "+userid+" deleted").build(); 
+                }else{
+                   return Response.status(401).entity("Authorization failed.").build(); 
+                }
+            }else{
+                return Response.status(401).entity("Authorization failed.").build();
+            }
+        }else{
+            return Response.status(404).entity("User not found").build();
+        }   
     }
     
     @GET
     @Path("/{userid}/messages")
     @Produces(MediaType.APPLICATION_XML)
-    public ArrayList<Message> getUserMessages(@PathParam("userid") int userid) {
-        ArrayList returnarray = new ArrayList<Message>();
-        for(Map.Entry<Integer,Message> entry : userdao.getUser(userid).getUsermessages().entrySet()){
-            returnarray.add(entry.getValue());
-        }        
-        return returnarray;
+    public Response getUserMessages(@PathParam("userid") int userid, @Context HttpHeaders headers) {
+        if(userdao.getUsers().containsKey(userid)){
+            if(headers.getRequestHeaders().keySet().contains("authorization")){
+                String authCredentials = headers.getRequestHeader("authorization").get(0);
+                boolean authResult = userdao.authenticateUser(authCredentials);
+                int myID = userdao.getUserByName(userdao.decodeUsername(authCredentials)).getUserID();
+                if(authResult && myID == userid){
+                    ArrayList returnarray = new ArrayList<Message>();
+                    for(Map.Entry<Integer,Message> entry : userdao.getUser(userid).getUsermessages().entrySet()){
+                        returnarray.add(entry.getValue());
+                    }      
+                    
+                    //Making the returnarray a generic entity so that it can be passed to client with the http response          
+                    GenericEntity<List<Message>> entity = new GenericEntity<List<Message>>(returnarray) {};
+                    return Response.status(200).entity(entity).build(); 
+                    
+                }else{
+                   return Response.status(401).entity("Authorization failed.").build(); 
+                }
+            }else{
+                return Response.status(401).entity("Authorization failed.").build();
+            }
+        }else{
+            return Response.status(404).entity("User not found").build();
+        } 
+        
     }
     
     @GET
     @Path("/{userid}/groups")
     @Produces(MediaType.APPLICATION_XML)
-    public ArrayList<Group> getUserGroups(@PathParam("userid") int userid) {
-        ArrayList returnarray = new ArrayList<Group>();
-        for(Map.Entry<Integer,Group> entry : userdao.getUser(userid).getGrouplist().entrySet()){
-            returnarray.add(entry.getValue());
-        }        
-        return returnarray;
+    public Response getUserGroups(@PathParam("userid") int userid, @Context HttpHeaders headers) {
+        
+         if(userdao.getUsers().containsKey(userid)){
+            if(headers.getRequestHeaders().keySet().contains("authorization")){
+                String authCredentials = headers.getRequestHeader("authorization").get(0);
+                boolean authResult = userdao.authenticateUser(authCredentials);
+                int myID = userdao.getUserByName(userdao.decodeUsername(authCredentials)).getUserID();
+                if(authResult && myID == userid){ 
+                    ArrayList returnarray = new ArrayList<Group>();
+                    for(Map.Entry<Integer,Group> entry : userdao.getUser(userid).getGrouplist().entrySet()){
+                        returnarray.add(entry.getValue());
+                    }
+                    //Making the returnarray a generic entity so that it can be passed to client with the http response
+                    
+                    GenericEntity<List<Group>> entity = new GenericEntity<List<Group>>(returnarray) {};
+                  
+                    return Response.status(200).entity(entity).build(); 
+                    
+                }else{
+                   return Response.status(401).entity("Authorization failed.").build(); 
+                }
+            }else{
+                return Response.status(401).entity("Authorization failed.").build();
+            }
+        }else{
+            return Response.status(404).entity("User not found").build();
+        }    
     }
     
     @GET
@@ -107,26 +195,26 @@ public class UsersResource {
     
     @POST
     @Path("/login")
-    public Response loginUser(@FormParam("name") String name, @FormParam("password") String password, @Context HttpServletRequest request) {
-        HttpSession session = request.getSession(true);
-        boolean authResult = userdao.authenticateUser(name,password);
+    @Produces(MediaType.APPLICATION_XML)
+    public Response loginUser(@Context HttpHeaders headers) {
+        String authCredentials = headers.getRequestHeader("authorization").get(0);
+        
+        boolean authResult = userdao.authenticateUser(authCredentials);
         if(authResult){
-                session.setAttribute("username", name);
-                session.setAttribute("id", userdao.getUserByName(name).getUserID());
-                session.setAttribute("status", "authenticated");
-            return Response.status(200).entity(session.getAttribute("id")).build();
+            int userID = userdao.getUserByName(userdao.decodeUsername(authCredentials)).getUserID();
+            ReturnInformation returninfo = new ReturnInformation(userID,authCredentials);
+            return Response.status(200).entity(returninfo).build();
         }else{
             return Response.status(401).entity("Invalid login.").build();
         }
         
     }
-    
+    /* POSSIBLY UNNEEDED
     @POST
     @Path("/logout")
     public Response logoutUser(@Context HttpServletRequest request) {
-        HttpSession session = request.getSession(true);
-        session.invalidate();
+        
         return Response.status(200).entity("User logged out").build();
     }
-    
+    */
 }

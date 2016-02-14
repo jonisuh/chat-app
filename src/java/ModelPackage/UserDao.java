@@ -10,7 +10,9 @@ import java.io.ObjectOutputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Map;
+import java.util.StringTokenizer;
 import java.util.TreeMap;
 
 
@@ -138,6 +140,7 @@ public class UserDao {
     /*
     Authenticates user login
     */
+    /*
     public boolean authenticateUser(String username, String password){
         User u = null;
         
@@ -157,6 +160,56 @@ public class UserDao {
             return false;
         }
     }
+    */
+    public boolean authenticateUser(String authCred){
+        if(authCred == null){
+            return false;
+        }
+
+        final String encodedUserPassword = authCred.replaceFirst("Basic"+" ", "");
+        
+        String userCredentials = null;
+        try{
+            byte[] decodedBytes = Base64.getDecoder().decode(encodedUserPassword);
+            userCredentials = new String(decodedBytes, "UTF-8");
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+        final StringTokenizer tokenizer = new StringTokenizer(userCredentials,":");
+        final String username = tokenizer.nextToken();
+        final String password = tokenizer.nextToken();
+        
+        User u = getUserByName(username);
+        if (u == null){
+            return false;
+        }
+        String cryptedPassword = encryptPassword(password);
+        boolean authStatus = username.equals(u.getUsername()) && cryptedPassword.equals(u.getPassword());
+       // boolean authStatus = "test".equals(username) && "test".equals(password);
+
+        return authStatus;
+    }
+    
+    public String decodeUsername(String encodedUser){
+        if(encodedUser == null){
+            return null;
+        }
+
+        final String encodedUserPassword = encodedUser.replaceFirst("Basic"+" ", "");
+        
+        String userCredentials = null;
+        try{
+            byte[] decodedBytes = Base64.getDecoder().decode(encodedUserPassword);
+            userCredentials = new String(decodedBytes, "UTF-8");
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+        final StringTokenizer tokenizer = new StringTokenizer(userCredentials,":");
+        final String username = tokenizer.nextToken();
+        
+        return username;
+    }
+    
     /*
     Returns user by username
     */
