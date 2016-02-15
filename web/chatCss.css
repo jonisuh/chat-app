@@ -107,6 +107,8 @@ ul#menu li.current a, ul#menu li:hover a{
 } 
 
 .sidebar_container{
+    height: 470px;
+    overflow-y: scroll;
     float: left;
     margin-right: 20px;
     width: 180px;
@@ -137,13 +139,20 @@ ul#menu li.current a, ul#menu li:hover a{
     border-radius: 0px 15px 0px 15px;
 
 }	
+#grouplist{
+    height: 470px;
+}
 .userlist_container{
     float: right;
     margin-right: 20px;
     width: 180px;
+    height: 470px;
     padding: 0;
 }
-
+#userlist{
+    height: 470px;
+    overflow-y: scroll;
+}
 #content{ 
     overflow: hidden;
     width: 300px;
@@ -171,13 +180,14 @@ ul#menu li.current a, ul#menu li:hover a{
  .group{
     margin-bottom: 3px;
     padding: 5px 1px 1px 1px;
-    background-color: gainsboro;
+    background-color: #6394cf;
+    cursor: pointer; cursor: hand;
 }
 .message{
     border-radius: 5px;
     margin-bottom: 2px;
     width: 80%;
-    background-color: gainsboro;
+    background-color: #76a1d5;
 }                
 .message p{
     margin-left: 5%;
@@ -189,7 +199,7 @@ ul#menu li.current a, ul#menu li:hover a{
 .mymessage{
     margin-left: 19%;
     text-align: right;
-    background-color: teal;
+    background-color: #3c79c3;
 }
 .timestamp{
     font-size: 10px;
@@ -207,7 +217,7 @@ ul#menu li.current a, ul#menu li:hover a{
 }
 #inputfield textarea{
     vertical-align: top;
-    
+    font: normal 85% Arial, Helvetica, sans-serif;
     padding: 2px;
     width: 240px;
     height: 30px;
@@ -244,12 +254,11 @@ ul#menu li.current a, ul#menu li:hover a{
   width: 100%;  
 }
 .usercontainer{
-    
     margin-bottom: 1px;
     cursor: pointer; cursor: hand;
 }
 .selectedContainer{
-    background-color: thistle;
+    background-color: #6394cf;
 }
 .usercontainer p{
     margin-left: 5px;

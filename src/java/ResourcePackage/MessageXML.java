@@ -62,6 +62,5 @@ public class MessageXML implements Serializable, Comparable<MessageXML> {
         
         return this.messageID-compareID;
     }
-
    
 }

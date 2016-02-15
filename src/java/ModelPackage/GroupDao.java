@@ -22,7 +22,7 @@ public class GroupDao {
     private TreeMap<Integer,Group> allgroups;
     private TreeMap<Integer,Message> allmessages;
     private final UserDao userdao;
-    //private TreeMap<Integer, String> usernames;
+    
     
     private GroupDao(){
         //this.allgroups = loadGroups();
@@ -153,6 +153,7 @@ public class GroupDao {
     Return all the groups
     */
     public TreeMap<Integer, Group> getGroups(){
+        
         return allgroups;
     }
     /*

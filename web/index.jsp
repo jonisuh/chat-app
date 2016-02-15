@@ -7,7 +7,7 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
         <script type="text/javascript" src="myScript.js"></script>
-        <title>test</title>
+        <title>Login</title>
     </head>
     <body>
         <div class="content">

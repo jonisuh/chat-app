@@ -1,4 +1,8 @@
 $(document).ready(function () {
+    if (!sessionStorage.credentials){
+        console.log("Credentials found redirecting to login");
+        window.location.href = "/ProjectV1/";
+    }
     var userID = sessionStorage.userID;
     var basicCredentials = sessionStorage.credentials;
     console.log(sessionStorage.credentials);
@@ -13,6 +17,8 @@ $(document).ready(function () {
     init();
     
     function init(){
+
+        
         $.ajax({
             type: "GET",
             url: "/ProjectV1/API/Users/" + userID + "/",
@@ -25,7 +31,7 @@ $(document).ready(function () {
                 $(".usernamespan").html(userName);
             }
         });
-        $("#userlist").html(" ");
+        //$("#userlist").html(" ");
         
         $.ajax({
             type: "GET",
@@ -35,10 +41,7 @@ $(document).ready(function () {
             },
             dataType: 'xml'
             , success: function (groupInformation) {
-                $("#grouplist").append("<h2>Groups</h2>");
-
                 $("#grouplist").append("<div id='groupWrapper'>");
-                $groups = $(groupInformation);
                 $(groupInformation).find("group").each(function () {
                     var groupName = $(this).find("groupName").text();
                     var groupID = $(this).find("groupID").text();
@@ -47,6 +50,25 @@ $(document).ready(function () {
                 $("#grouplist").append("</div>");
             }
         });
+        
+        $.ajax({
+            type: "GET",
+            url: "/ProjectV1/API/Users/",
+            dataType: 'xml'
+            , success: function (userlist) {
+                $("#userlist").append("<div id='usersWrapper'>");
+                $('user', userlist).each(function () {
+                    var thisuserID = $(this).find("userID").text();
+                    var thisuserName = $(this).find("username").text();
+                    if(parseInt(thisuserID) === parseInt(userID)){
+                        thisuserName = "Me";
+                    }                  
+                    $("#usersWrapper").append("<div class='usercontainer' id='user_"+thisuserID+"'><p>"+thisuserName+"</p></div>") 
+                });
+                $("#userlist").append("</div>");
+            }
+        });
+        
         $("#placeholder").attr("id", userID);
     }
     /* OLD
@@ -136,10 +158,15 @@ $(document).ready(function () {
         var groupID = $(this).attr("id");
         var groupIDSplit = groupID.split("_");
         $(".usergroup").attr("id", groupIDSplit[1]);
-        $(".groupnamespan").html($(this).text());
+        //$(".groupnamespan").html($(this).text());
+        
         $("#messageSpace").html(" ");
         $("#userlist").html(" ");
+        $("#message").height(30);
         $("#message").val("");
+        
+        $(".group").css("background-color","#6394cf");
+        $(this).css("background-color","#366db0");
         //Loading users
         
         $.ajax({
@@ -171,8 +198,6 @@ $(document).ready(function () {
                 "Authorization": basicCredentials
             },
             success: function (messages) {
-                //$messages = $( messages );
-                
                 $('messageroot', messages).each(function () {
                     
                     var senderID = $(this).find("userID").text();
@@ -187,7 +212,7 @@ $(document).ready(function () {
                         messageclasses = "message mymessage"
                         senderName = "Me";
                     }
-                    $("#messageSpace").append("<div class='" + messageclasses + "' id='message_" + messageID + "'><p>" + message + "</p><p>" + senderName + " <span class='timestamp'>" + timestamp + "</span></p></div>");
+                    $("#messageSpace").append("<div class='" + messageclasses + "' id='message_" + messageID + "'><p>" + escapeHtml(message) + "</p><p>" + senderName + " <span class='timestamp'>" + timestamp + "</span></p></div>");
                 });
                      scrollToBot();
 
@@ -230,7 +255,6 @@ $(document).ready(function () {
         loadMessages(event.data);
     }
     function sendMsg(msg) {
-        
         websocket.send(msg);
     }
 
@@ -310,7 +334,7 @@ $(document).ready(function () {
                            /* var newMessage = $("<div class='" + messageclasses + "' id='message_" + messageID + "'><p>" + message + "</p><p>" + senderName + " <span class='timestamp'>" + timestamp + "</span></p></div>").hide();
                             $("#messageSpace").append(newMessage);
                             newMessage.show("slow"); */
-                            $("#messageSpace").append("<div class='" + messageclasses + "' id='message_" + messageID + "'><p>" + message + "</p><p>" + senderName + " <span class='timestamp'>" + timestamp + "</span></p></div>");
+                            $("#messageSpace").append("<div class='" + messageclasses + "' id='message_" + messageID + "'><p>" + escapeHtml(message) + "</p><p>" + escapeHtml(senderName) + " <span class='timestamp'>" + timestamp + "</span></p></div>");
                         }
                     });
                     scrollToBot();            
@@ -331,6 +355,20 @@ $(document).ready(function () {
         
     }
     
+
+    function escapeHtml(string) {
+       var entityMap = {
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': '&quot;',
+        "'": '&#39;',
+        "/": '&#x2F;'
+      };
+      return String(string).replace(/[&<>"'\/]/g, function (s) {
+        return entityMap[s];
+      });
+    }
     
     $("#logout").click(function () {    
         sessionStorage.removeItem('userID');
@@ -338,12 +376,6 @@ $(document).ready(function () {
         window.location.href = "/ProjectV1/";   
     });
     
-    //WIP
-    /*
-    $(".groupnamespan").click(function () {
-        $("#groupfunctions").toggle();
-    });  
-    */
 
        
 });

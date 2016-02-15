@@ -22,7 +22,6 @@ public class ChatEndPoint {
     @OnMessage
     public void onMessage(String message) throws IOException, EncodeException {
         for (Session wsSession : wsSessions) {
-            System.out.println("Sending message to "+wsSession);
             wsSession.getBasicRemote().sendObject(message);
         }
     }
