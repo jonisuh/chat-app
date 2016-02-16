@@ -1,26 +1,23 @@
 $(document).ready(function () {
-    var myID = getCookie("userID");
-    $.ajax({
-        type: "GET",
-        url: "/ProjectV1/API/Users/",
-        dataType: 'xml'
-        , success: function (userInformation) {
-             $('user', userInformation).each(function () {
-                    var userID = $(this).find("userID").text();
-                    var username = $(this).find("username").text();
-                    if(parseInt(myID) != parseInt(userID)){
-                        $("#users").append("<div class='usercontainer' id='user_"+userID+"'><p>"+username+"</p></div>");
-                    }
-                 });
-        }
-    });
-    
-    $("#addUsers").click(function(){
-        $("#users").toggle();
-    });
+    var myID = sessionStorage.userID;
+    var basicCredentials = sessionStorage.credentials;
+    console.log(myID);
+    console.log(basicCredentials);
+
     
     $(document).on('click', '.usercontainer', function () {
-        $(this).toggleClass('selectedContainer');
+        var divID = $(this).attr("id");
+        var idSplit = divID.split("_");
+        var selectedUserID = idSplit[1];
+        if(parseInt(selectedUserID) != parseInt(myID)){
+            $(this).toggleClass('selectedContainer');
+            var selectedCount = $(".selectedContainer").length;
+            if(selectedCount >= 2){
+                $("#createGroup").show();
+            }else{
+                $("#createGroup").hide();
+            }
+        }
     });
     
     $("#createNewGroup").click(function(){
@@ -29,8 +26,11 @@ $(document).ready(function () {
         $.ajax({
             type: "POST",
             url: "/ProjectV1/API/Groups/",
-            data: {groupname:groupname,groupstarterID:myID}
-            ,success: function (createdGroupID) {
+            data: {groupname:groupname,groupstarterID:myID},
+            headers:{
+                "Authorization": basicCredentials
+            },success: function (createdGroupID) {
+               $("#groupWrapper").append("<div class='group' id='group_" + createdGroupID + "'><h3>" + groupname + "</h3></div>");
                $('.selectedContainer').each(function(i, obj) {
                    var divID = $(this).attr("id");
                    var idSplit = divID.split("_");
@@ -44,7 +44,6 @@ $(document).ready(function () {
                         }
                     });    
                 }); 
-                location.reload();
             }
             
         });
@@ -52,16 +51,3 @@ $(document).ready(function () {
     });
 
 });
-
-function getCookie(cname) {
-    var name = cname + "=";
-    var ca = document.cookie.split(';');
-    for (var i = 0; i < ca.length; i++) {
-        var c = ca[i];
-        while (c.charAt(0) == ' ')
-            c = c.substring(1);
-        if (c.indexOf(name) == 0)
-            return c.substring(name.length, c.length);
-    }
-    return "";
-} 

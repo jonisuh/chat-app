@@ -35,14 +35,22 @@
         <div id="chatScreen">
 
             <div id="site_content">		
-
-                <div class="sidebar_container">   
+                <div id="topbar">
+                    <div id="createGroup">
+                        <p> New group </p>
+                        Name: <input id="newGroupName" type="text" value="My Chat">
+                        <div id="createNewGroup">Create</div>
+                    </div>
+                </div>
+                <div class="sidebar_container">  
+                    
                     <div class="usergroup" id="groupplaceholder">
                         <!--<p>Group: <span class="groupnamespan"> </span></p>-->
                         <div class="groupnamespan"></div>
                     </div>
+                    <h2>Groups</h2>
                     <div id="grouplist">
-                       <h2>Groups</h2>
+                       
                     </div>
                 </div>		  
 
@@ -57,9 +65,10 @@
                         </div>                  
                 </div> 
                 
-                <div class="userlist_container">   
+                <div class="userlist_container">
+                    
+                    <h2>Users</h2>
                     <div id="userlist">
-                        <h2>Users</h2>
                     </div>       
                 </div>
 

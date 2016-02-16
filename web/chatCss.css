@@ -107,8 +107,9 @@ ul#menu li.current a, ul#menu li:hover a{
 } 
 
 .sidebar_container{
+    overflow-x: hidden;
+    overflow-y: hidden;
     height: 470px;
-    overflow-y: scroll;
     float: left;
     margin-right: 20px;
     width: 180px;
@@ -140,9 +141,13 @@ ul#menu li.current a, ul#menu li:hover a{
 
 }	
 #grouplist{
+    width: 198px;
     height: 470px;
+    overflow-y: scroll;
 }
 .userlist_container{
+    overflow-y: hidden;
+    overflow-x: hidden;
     float: right;
     margin-right: 20px;
     width: 180px;
@@ -150,8 +155,13 @@ ul#menu li.current a, ul#menu li:hover a{
     padding: 0;
 }
 #userlist{
+    width: 198px;
     height: 470px;
+    overflow-x: hidden;
     overflow-y: scroll;
+}
+#usersWrapper{
+    padding-bottom: 45px;
 }
 #content{ 
     overflow: hidden;
@@ -175,7 +185,9 @@ ul#menu li.current a, ul#menu li:hover a{
     margin-right: 10px;
     float: left;
 }
-
+#groupWrapper{
+    padding-bottom: 45px;
+}
 
  .group{
     margin-bottom: 3px;
@@ -185,8 +197,8 @@ ul#menu li.current a, ul#menu li:hover a{
 }
 .message{
     border-radius: 5px;
-    margin-bottom: 2px;
-    width: 80%;
+    margin-bottom: 3px;
+    width: 75%;
     background-color: #76a1d5;
 }                
 .message p{
@@ -197,7 +209,7 @@ ul#menu li.current a, ul#menu li:hover a{
     
 }
 .mymessage{
-    margin-left: 19%;
+    margin-left: 20%;
     text-align: right;
     background-color: #3c79c3;
 }
@@ -237,10 +249,8 @@ ul#menu li.current a, ul#menu li:hover a{
    width: 50%;
 }
 .usergroup{
-   display: inline-block;
    float: left;
    width: 100%;
-   margin-bottom: 5px;
 }
 #groupfunctions{
     display: none;
@@ -263,14 +273,33 @@ ul#menu li.current a, ul#menu li:hover a{
 .usercontainer p{
     margin-left: 5px;
 }
-#newGroup{
-    border:1px solid black;
-    display: none;
-    margin-bottom: 10px;
-    min-height: 100px;
+
+#topbar{
+    width: 100%;
+    height: 52px;
 }
 #createGroup{
+    width: 200px;
+    float: right;
+    display: none;
+}
+#createGroup p{
+    padding: 0;
+    margin: 0;
+}
+#createGroup input{
+    width: 75px;
+}
+#createNewGroup{
     cursor: pointer; cursor: hand;
+    background-color: #6394cf;
+    padding-left: 1px;
+    padding-right: 1px;
+    padding-top: 0.5px;
+    padding-bottom: 0.5px;
+    display: inline-block;
+    margin: 0;
+    width: 50px;
 }
 #users{  
     border-top:1px solid black;

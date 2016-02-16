@@ -28,6 +28,8 @@ public class GroupDao {
         //this.allgroups = loadGroups();
         this.allgroups = loadGroups();
         this.allmessages = loadMessages();
+        //this.allgroups = new TreeMap<Integer,Group>();
+        //this.allmessages = new TreeMap<Integer,Message>();
         this.userdao = UserDao.getInstance();
     }
     

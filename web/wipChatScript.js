@@ -160,6 +160,7 @@ $(document).ready(function () {
         $(".usergroup").attr("id", groupIDSplit[1]);
         //$(".groupnamespan").html($(this).text());
         
+        $("#createGroup").hide();
         $("#messageSpace").html(" ");
         $("#userlist").html(" ");
         $("#message").height(30);
