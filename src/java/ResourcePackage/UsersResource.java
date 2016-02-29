@@ -188,7 +188,7 @@ public class UsersResource {
     
     @GET
     @Path("/{userid}/name")
-    @Produces(MediaType.APPLICATION_XML)
+    @Produces("text/plain")
     public String getUserName(@PathParam("userid") int userid) {
         return userdao.getUser(userid).getUsername();
     }

@@ -13,6 +13,9 @@ public class User implements Serializable {
     private HashMap<Integer,Message> usermessages;
     private String username;
     private String password;
+    private String firstname; //TODO
+    private String lastname;
+    private String email;
     private int userID;
     
     public User(){

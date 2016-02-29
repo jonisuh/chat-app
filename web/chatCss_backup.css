@@ -1,0 +1,315 @@
+html{
+height: 100%;
+width:100%;
+background-color:#b1c9e7;
+}
+
+*{ margin: 0;
+  padding: 0;
+}
+
+body{ 
+font: normal 85% Arial, Helvetica, sans-serif;
+  color: #fff;
+}
+
+p{ padding: 0 0 10px 0;
+  line-height: 1.7em;
+  font-size: 100% }
+
+h1, h2, h3, h4, h5, h6 { 
+margin: 0 0 10px 0;}
+
+a{ 
+font-weight: bold;
+color:#FFF;
+background: transparent;
+outline: none;
+text-decoration: underline;}
+
+a:hover{ text-decoration: none;}
+
+ul{ margin: 2px 0 22px 30px;
+line-height: 1.7em;
+font-style: normal;
+font-size: 100%;}
+
+ol
+{ margin: 8px 0 22px 20px;}
+
+ol li{ margin: 0 0 11px 0;}
+
+#chatScreen, #header{ 
+margin-left: auto; 
+margin-right: auto;}
+
+#header{ 
+width: 75%;
+height: 50px;
+margin-top: 30px;	
+} 
+  
+#welcome{ 
+    width: 200px;
+float: left;
+text-align: left;
+height: 45px;
+margin: 0 auto;
+padding-left: 20px;}	 
+   
+#welcome h1 a{
+font: normal 150% Helvetica, sans-serif;
+letter-spacing: -3px;
+color: #FFF;
+text-decoration: none;
+text-shadow: 1px 1px #000;  }
+  
+#menu_items{ 
+float: right;
+width: 150px;}
+  
+ul#menu{ 
+margin:0;
+float: right;}
+
+ul#menu li{ 
+    padding: 0 0 0 0px;
+    list-style: none;
+    margin: 2px 0 0 0;
+    display: inline;
+    background: transparent;
+}
+
+ul#menu li a{ 
+    float: left;
+    font: 80% Helvetica, sans-serif;
+    text-align: center;
+    text-decoration: none;
+    height: 24px;
+    text-shadow: 1px 1px #000;
+    padding: 16px 15px 10px 15px;
+    background: transparent; 
+} 
+#groupnamespan{
+    width: 100%;
+    margin-bottom: 5px;
+}
+ul#menu li.current a, ul#menu li:hover a{ 
+    color: #C56B85;
+    text-shadow: 1px 1px #000;
+}
+
+#site_content{ 
+    width: 75%;
+    overflow: hidden;
+    margin: 0 auto;
+    padding: 2% 0 20px 20px;
+} 
+
+.sidebar_container{
+    overflow-x: hidden;
+    overflow-y: hidden;
+    height: 470px;
+    float: left;
+    margin-right: 20px;
+    width: 180px;
+    padding: 0;
+}
+
+.sidebar{ 
+    float: left;
+    width: 180px;
+    margin-bottom: 10px;
+}
+
+.sidebar_item{
+    font: normal 70% Helvetica, sans-serif;
+    width: 180px;
+}
+
+.sidebar h2{
+    padding: 5px 0 0 10px;
+    border-radius: 0px 15px 0px 15px;
+    text-decoration: underline;
+}
+
+.sidebar h3{ 
+    padding: 5px 0 0 10px;
+    font: normal 140% Helvetica, sans-serif;
+    height: 30px;
+    border-radius: 0px 15px 0px 15px;
+
+}	
+#grouplist{
+    width: 198px;
+    height: 470px;
+    overflow-y: scroll;
+}
+.userlist_container{
+    overflow-y: hidden;
+    overflow-x: hidden;
+    float: right;
+    margin-right: 20px;
+    width: 180px;
+    height: 470px;
+    padding: 0;
+}
+#userlist{
+    width: 198px;
+    height: 470px;
+    overflow-x: hidden;
+    overflow-y: scroll;
+}
+#usersWrapper{
+    padding-bottom: 45px;
+}
+#content{ 
+    overflow: hidden;
+    width: 300px;
+    height: 470px;
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    padding-top: 5px;
+    float: left;
+}
+
+#messageSpace{ 
+    width: 300px;
+    height: 350px;
+    margin-bottom: 20px;
+}
+  
+.content_container{ 
+    width: 320px;
+    padding: 5px;
+    margin-right: 10px;
+    float: left;
+}
+#groupWrapper{
+    padding-bottom: 45px;
+}
+
+ .group{
+    margin-bottom: 3px;
+    padding: 5px 1px 1px 1px;
+    background-color: #6394cf;
+    cursor: pointer; cursor: hand;
+}
+.message{
+    border-radius: 5px;
+    margin-bottom: 3px;
+    width: 75%;
+    background-color: #76a1d5;
+}                
+.message p{
+    margin-left: 5%;
+    width: 90%;
+    min-height: 20px;
+    word-wrap: break-word;
+    
+}
+.mymessage{
+    margin-left: 20%;
+    text-align: right;
+    background-color: #3c79c3;
+}
+.timestamp{
+    font-size: 10px;
+}
+#messageSpace{
+    overflow-x: hidden;
+    height: 92%;
+    width: 317px;
+    overflow-y: scroll;
+}
+#inputfield{
+    height: 36px;
+    width: 296px;
+    position: absolute;
+}
+#inputfield textarea{
+    vertical-align: top;
+    font: normal 85% Arial, Helvetica, sans-serif;
+    padding: 2px;
+    width: 240px;
+    height: 30px;
+    resize: none;
+}
+#sendMessage{
+    border-radius: 0;
+    float: right;
+    vertical-align: top;
+    height: 36px;
+    width: 50px;
+}
+
+.username{
+   display: inline-block;
+   float: left;
+   width: 50%;
+}
+.usergroup{
+   float: left;
+   width: 100%;
+}
+#groupfunctions{
+    display: none;
+    background-color: lightblue;
+    position: absolute;
+    width: 100px;
+    border:1px solid black;
+    height: 200px;
+}
+#groupfunctions input{
+  width: 100%;  
+}
+.usercontainer{
+    margin-bottom: 1px;
+    cursor: pointer; cursor: hand;
+}
+.selectedContainer{
+    background-color: #6394cf;
+}
+.usercontainer p{
+    margin-left: 5px;
+}
+
+#topbar{
+    width: 100%;
+    height: 52px;
+}
+#createGroup{
+    width: 200px;
+    float: right;
+    display: none;
+}
+#createGroup p{
+    padding: 0;
+    margin: 0;
+}
+#createGroup input{
+    width: 75px;
+}
+#createNewGroup{
+    cursor: pointer; cursor: hand;
+    background-color: #6394cf;
+    padding-left: 1px;
+    padding-right: 1px;
+    padding-top: 0.5px;
+    padding-bottom: 0.5px;
+    display: inline-block;
+    margin: 0;
+    width: 50px;
+}
+#users{  
+    border-top:1px solid black;
+    border-bottom:1px solid black;
+    display: none;
+}
+#addUser{
+    cursor: pointer; cursor: hand;
+}
+.functionwrapper{
+    height: 25px;
+    margin-bottom: 5px;
+}

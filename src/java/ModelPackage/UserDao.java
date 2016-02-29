@@ -1,12 +1,16 @@
 
 package ModelPackage;
 
+import java.io.EOFException;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -14,6 +18,7 @@ import java.util.Base64;
 import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
+import javax.xml.bind.DatatypeConverter;
 
 
 
@@ -36,7 +41,9 @@ public class UserDao {
     */
     public void saveUsers(){
         try {
-                FileOutputStream out = new FileOutputStream("users.ser");
+                URL url = this.getClass().getClassLoader().getResource("ModelPackage/users.ser");
+                File f = new File(url.toURI());
+                FileOutputStream out = new FileOutputStream(f);
                 ObjectOutputStream obout = new ObjectOutputStream(out);
                 obout.writeObject(this.allusers);
                 obout.close();
@@ -46,15 +53,20 @@ public class UserDao {
         } catch (IOException e) {
                 System.out.println("Error writing into file");
                 e.printStackTrace();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
         }
     }
     /*
     Loads users from user.ser
     */
-    public TreeMap loadUsers(){
+    public TreeMap loadUsers() {
+        
         TreeMap<Integer,User> usermap = null;
         try {
-                FileInputStream in = new FileInputStream("users.ser");
+                URL url = this.getClass().getClassLoader().getResource("ModelPackage/users.ser");
+                File f = new File(url.toURI());
+                FileInputStream in = new FileInputStream(f);
                 ObjectInputStream obin = new ObjectInputStream(in);
                 usermap = (TreeMap<Integer,User>)obin.readObject();
                 obin.close();
@@ -64,9 +76,12 @@ public class UserDao {
         } catch (IOException e) {
                 System.out.println("Error reading file");
                 e.printStackTrace();
+                return new TreeMap<Integer,User>();
         } catch (ClassNotFoundException e) {
                 System.out.println("Error reading object");
                 e.printStackTrace();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
         }
         return usermap;
     }
@@ -89,6 +104,8 @@ public class UserDao {
             returnstring = returnstring + "Username is empty.";
         }
         //Checking if username exists
+       
+        
         for(Map.Entry<Integer,User> entry : this.allusers.entrySet()){
             if(entry.getValue().getUsername().equals(username)){
                 validinformation = false;
@@ -107,7 +124,12 @@ public class UserDao {
         }
         
         if(validinformation){
-            int userID = this.allusers.lastKey() + 1;
+            int userID;
+            if(this.allusers.isEmpty()){
+                userID = 0;
+            }else{
+                userID = this.allusers.lastKey() + 1;
+            }
             String cryptedpassword = encryptPassword(password);
             User u = new User(username,cryptedpassword,userID);
             this.allusers.put(userID,u);
@@ -140,27 +162,7 @@ public class UserDao {
     /*
     Authenticates user login
     */
-    /*
-    public boolean authenticateUser(String username, String password){
-        User u = null;
-        
-        for(Map.Entry<Integer,User> entry : this.allusers.entrySet()){
-            if(entry.getValue().getUsername().equals(username)){
-                u = entry.getValue();
-            }
-        }
-        if(u != null){
-            String cryptedpassword = encryptPassword(password);
-            if(u.getPassword().equals(cryptedpassword)){
-                return true;
-            }else{
-                return false;
-            }
-        }else{
-            return false;
-        }
-    }
-    */
+    
     public boolean authenticateUser(String authCred){
         if(authCred == null){
             return false;
@@ -170,7 +172,7 @@ public class UserDao {
         
         String userCredentials = null;
         try{
-            byte[] decodedBytes = Base64.getDecoder().decode(encodedUserPassword);
+            byte[] decodedBytes = DatatypeConverter.parseBase64Binary(encodedUserPassword);
             userCredentials = new String(decodedBytes, "UTF-8");
         }catch(IOException e){
             e.printStackTrace();
@@ -199,7 +201,7 @@ public class UserDao {
         
         String userCredentials = null;
         try{
-            byte[] decodedBytes = Base64.getDecoder().decode(encodedUserPassword);
+            byte[] decodedBytes = DatatypeConverter.parseBase64Binary(encodedUserPassword);
             userCredentials = new String(decodedBytes, "UTF-8");
         }catch(IOException e){
             e.printStackTrace();
