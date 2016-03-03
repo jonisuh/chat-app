@@ -18,12 +18,13 @@ import java.util.Base64;
 import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
+import java.util.concurrent.ConcurrentSkipListMap;
 import javax.xml.bind.DatatypeConverter;
 
 
 
 public class UserDao {
-    private TreeMap<Integer,User> allusers;
+    private ConcurrentSkipListMap<Integer,User> allusers;
     //private TreeMap<Integer, String> usernames;
     
     private UserDao(){
@@ -52,7 +53,6 @@ public class UserDao {
                 e.printStackTrace();
         } catch (IOException e) {
                 System.out.println("Error writing into file");
-                e.printStackTrace();
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }
@@ -60,23 +60,22 @@ public class UserDao {
     /*
     Loads users from user.ser
     */
-    public TreeMap loadUsers() {
+    public ConcurrentSkipListMap loadUsers() {
         
-        TreeMap<Integer,User> usermap = null;
+        ConcurrentSkipListMap<Integer,User> usermap = null;
         try {
                 URL url = this.getClass().getClassLoader().getResource("ModelPackage/users.ser");
                 File f = new File(url.toURI());
                 FileInputStream in = new FileInputStream(f);
                 ObjectInputStream obin = new ObjectInputStream(in);
-                usermap = (TreeMap<Integer,User>)obin.readObject();
+                usermap = (ConcurrentSkipListMap<Integer,User>)obin.readObject();
                 obin.close();
         } catch (FileNotFoundException e) {
                 System.out.println("Could not open users.ser");
                 e.printStackTrace();
         } catch (IOException e) {
                 System.out.println("Error reading file");
-                e.printStackTrace();
-                return new TreeMap<Integer,User>();
+                return new ConcurrentSkipListMap<Integer,User>();
         } catch (ClassNotFoundException e) {
                 System.out.println("Error reading object");
                 e.printStackTrace();
@@ -88,20 +87,20 @@ public class UserDao {
     /*
     Registers a new user.
     */
-    public String createUser(String username, String password){
+    public Boolean createUser(String username, String password, String firstname, String lastname, String email){
         boolean validinformation = true;
-        String returnstring = "";
+        
         if(username.length() > 16){
             validinformation = false;
-            returnstring = "Name is too long.";
+            System.out.println("Name is too long.");
         }
         if(!username.matches("^[a-zA-Z0-9]*$")){
             validinformation = false;
-            returnstring = returnstring + "\nName is not alphanumeric";
+            System.out.println("Name is not alphanumeric");
         }
         if(username.length() < 0 || username == null ||username.equals(" ") ||username.equals("")){
             validinformation = false;
-            returnstring = returnstring + "Username is empty.";
+           System.out.println("Username is empty.");
         }
         //Checking if username exists
        
@@ -109,20 +108,59 @@ public class UserDao {
         for(Map.Entry<Integer,User> entry : this.allusers.entrySet()){
             if(entry.getValue().getUsername().equals(username)){
                 validinformation = false;
-                returnstring = returnstring + "\nName already exists";
+                System.out.println("Name already exists");
             }
         }
         
         if(password.length() > 16){
             validinformation = false;
-            returnstring = returnstring + "\nPassword is too long.";
+            System.out.println("Password is too long.");
         }
         
         if(password.length() < 0 || password == null ||password.equals(" ") || password.equals("")){
             validinformation = false;
-            returnstring = returnstring + "\nPassword is empty.";
+            System.out.println("Password is empty.");
+        }
+        //Validating firstname
+        
+        if(firstname.length() < 0 || firstname == null ||firstname.equals(" ") ||firstname.equals("")){
+            validinformation = false;
+            System.out.println("First name is empty.");
+        }
+        if(!firstname.matches("^[a-zA-Z0-9]*$")){
+            validinformation = false;
+            System.out.println("First name is not alphanumeric");
+        }
+         if(firstname.length() > 16){
+            validinformation = false;
+            System.out.println("Name is too long.");
         }
         
+         //Validating lastname
+        if(lastname.length() < 0 || lastname == null ||lastname.equals(" ") ||lastname.equals("")){
+            validinformation = false;
+            System.out.println("Last name is empty.");
+        }
+        if(!lastname.matches("^[a-zA-Z0-9]*$")){
+            validinformation = false;
+            System.out.println("Last name is not alphanumeric");
+        }
+         if(lastname.length() > 16){
+            validinformation = false;
+            System.out.println("Name is too long.");
+        }
+         
+         //Validating email
+         if(email.length() < 0 || email == null ||email.equals(" ") ||email.equals("")){
+            validinformation = false;
+            System.out.println("Email is empty.");
+        }
+         if(email.length() > 30){
+            validinformation = false;
+            System.out.println("Email is too long.");
+        }
+         
+         
         if(validinformation){
             int userID;
             if(this.allusers.isEmpty()){
@@ -131,15 +169,16 @@ public class UserDao {
                 userID = this.allusers.lastKey() + 1;
             }
             String cryptedpassword = encryptPassword(password);
-            User u = new User(username,cryptedpassword,userID);
+            
+            User u = new User(username,cryptedpassword,firstname,lastname,email,userID);
             this.allusers.put(userID,u);
             saveUsers();
-            returnstring = "User created with userID: "+userID;
+            System.out.println("User created with userID: "+userID);
         }
-        return returnstring;
+        return validinformation;
     }
     //Get all users
-    public TreeMap<Integer, User> getUsers(){
+    public ConcurrentSkipListMap<Integer, User> getUsers(){
         return this.allusers;
     }
     
@@ -150,9 +189,104 @@ public class UserDao {
     /*
     Updates user values.
     */
-    public void updateUser(int userID, String name){
-        allusers.get(userID).setUsername(name);
-        saveUsers();
+    public Boolean updateUser(int userID, String username,String firstname, String lastname, String email){
+        User u = allusers.get(userID);
+        
+        boolean validinformation = true;
+        
+        if(username.length() > 16){
+            validinformation = false;
+            System.out.println("Name is too long.");
+        }
+        if(!username.matches("^[a-zA-Z0-9]*$")){
+            validinformation = false;
+            System.out.println("Name is not alphanumeric");
+        }
+        if(username.length() < 0 || username == null ||username.equals(" ") ||username.equals("")){
+            validinformation = false;
+           System.out.println("Username is empty.");
+        }
+        //Checking if username exists
+       
+        
+        for(Map.Entry<Integer,User> entry : this.allusers.entrySet()){
+            if(entry.getValue().getUsername().equals(username) && entry.getValue().getUserID() != userID){
+                validinformation = false;
+                System.out.println("Name already exists");
+            }
+        }
+        
+        //Validating firstname
+        
+        if(firstname.length() < 0 || firstname == null ||firstname.equals(" ") ||firstname.equals("")){
+            validinformation = false;
+            System.out.println("First name is empty.");
+        }
+        if(!firstname.matches("^[a-zA-Z0-9]*$")){
+            validinformation = false;
+            System.out.println("First name is not alphanumeric");
+        }
+         if(firstname.length() > 16){
+            validinformation = false;
+            System.out.println("Name is too long.");
+        }
+        
+         //Validating lastname
+        if(lastname.length() < 0 || lastname == null ||lastname.equals(" ") ||lastname.equals("")){
+            validinformation = false;
+            System.out.println("Last name is empty.");
+        }
+        if(!lastname.matches("^[a-zA-Z0-9]*$")){
+            validinformation = false;
+            System.out.println("Last name is not alphanumeric");
+        }
+         if(lastname.length() > 16){
+            validinformation = false;
+            System.out.println("Name is too long.");
+        }
+         
+         //Validating email
+         if(email.length() < 0 || email == null ||email.equals(" ") ||email.equals("")){
+            validinformation = false;
+            System.out.println("Email is empty.");
+        }
+         if(email.length() > 30){
+            validinformation = false;
+            System.out.println("Email is too long.");
+        }
+         
+         
+        if(validinformation){
+            System.out.println(u.getUsername()+" "+u.getFirstname()+" "+u.getLastname()+" "+u.getEmail());
+            u.setUsername(username);
+            u.setFirstname(firstname);
+            u.setLastname(lastname);
+            u.setEmail(email);
+            System.out.println(u.getUsername()+" "+u.getFirstname()+" "+u.getLastname()+" "+u.getEmail());
+            saveUsers();
+        }
+        return validinformation;
+        
+    }
+    public boolean updatePassword(int userID, String password){
+        boolean validpassword = true;
+        
+        if(password.length() > 16){
+            validpassword = false;
+            System.out.println("Password is too long.");
+        }
+        
+        if(password.length() < 0 || password == null ||password.equals(" ") || password.equals("")){
+            validpassword = false;
+            System.out.println("Password is empty.");
+        }
+        if(validpassword){
+            User u = allusers.get(userID);
+            String encryptedPassword = encryptPassword(password);
+            u.setPassword(encryptedPassword);
+        }
+        
+        return validpassword;
     }
     //Delete user record
     public void deleteUser(int userID){

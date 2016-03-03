@@ -17,6 +17,7 @@ import java.net.URL;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.TreeMap;
+import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 /**
@@ -24,8 +25,8 @@ import java.util.logging.Logger;
  * @author Joni
  */
 public class GroupDao {
-    private TreeMap<Integer,Group> allgroups;
-    private TreeMap<Integer,Message> allmessages;
+    private ConcurrentSkipListMap<Integer,Group> allgroups;
+    private ConcurrentSkipListMap<Integer,Message> allmessages;
     private final UserDao userdao;
     
     
@@ -59,28 +60,26 @@ public class GroupDao {
                 e.printStackTrace();
         } catch (IOException e) {
                 System.out.println("Error writing into file");
-                e.printStackTrace();
         }catch (URISyntaxException e) {
                  e.printStackTrace();
         }
     }
     
-    private TreeMap<Integer, Group> loadGroups(){
-        TreeMap<Integer,Group> groupmap = null;
+    private ConcurrentSkipListMap<Integer, Group> loadGroups(){
+        ConcurrentSkipListMap<Integer,Group> groupmap = null;
         try {
                 URL url = this.getClass().getClassLoader().getResource("ModelPackage/groups.ser");
                 File f = new File(url.toURI());
                 FileInputStream in = new FileInputStream(f);
                 ObjectInputStream obin = new ObjectInputStream(in);
-                groupmap = (TreeMap<Integer,Group>)obin.readObject();
+                groupmap = (ConcurrentSkipListMap<Integer,Group>)obin.readObject();
                 obin.close();
         } catch (FileNotFoundException e) {
                 System.out.println("Could not open groups.ser");
                 e.printStackTrace();
         } catch (IOException e) {
                 System.out.println("Error reading file");
-                e.printStackTrace();
-                return new TreeMap<Integer,Group>();
+                return new ConcurrentSkipListMap<Integer,Group>();
         } catch (ClassNotFoundException e) {
                 System.out.println("Error reading object");
                 e.printStackTrace();
@@ -102,28 +101,26 @@ public class GroupDao {
                 e.printStackTrace();
         } catch (IOException e) {
                 System.out.println("Error writing into file");
-                e.printStackTrace();
         } catch (URISyntaxException e) {
                  e.printStackTrace();
         }
     }
     
-    private TreeMap<Integer, Message> loadMessages(){
-        TreeMap<Integer,Message> messagemap = null;
+    private ConcurrentSkipListMap<Integer, Message> loadMessages(){
+        ConcurrentSkipListMap<Integer,Message> messagemap = null;
         try {
                 URL url = this.getClass().getClassLoader().getResource("ModelPackage/messages.ser");
                 File f = new File(url.toURI());
                 FileInputStream in = new FileInputStream(f);
                 ObjectInputStream obin = new ObjectInputStream(in);
-                messagemap = (TreeMap<Integer,Message>)obin.readObject();
+                messagemap = (ConcurrentSkipListMap<Integer,Message>)obin.readObject();
                 obin.close();
         } catch (FileNotFoundException e) {
                 System.out.println("Could not open messages.ser");
                 e.printStackTrace();
         } catch (IOException e) {
                 System.out.println("Error reading file");
-                e.printStackTrace();
-                return new TreeMap<Integer,Message>();
+                return new ConcurrentSkipListMap<Integer,Message>();
         } catch (ClassNotFoundException e) {
                 System.out.println("Error reading object");
                 e.printStackTrace();
@@ -137,7 +134,7 @@ public class GroupDao {
     Creates a new group and puts the user who created the group in the admin and user list
     */
     public int createGroup(String groupname, User starter){
-        if(groupname.length() <= 16 && groupname.length() > 0 && groupname != null && !groupname.equals(" ")){
+        if(groupname.length() <= 50 && groupname.length() > 0 && groupname != null && !groupname.equals(" ")){
             System.out.println("New group created");
             int groupID ;
             if(this.allgroups.isEmpty()){
@@ -173,20 +170,24 @@ public class GroupDao {
     This method removes a user from a group specified by the groupID and then removes the group from the users group list
     Additionally if the user is an admin in the group it also removes the user from the groups admin list
     */
-    public void removeUserFromGroup(int groupID, User u){
+    public void removeUserFromGroup(int groupID, int userID){
        Group g = allgroups.get(groupID);
-       g.removeUser(u.getUserID());
-       u.removeGroup(g.getGroupID());
-       if(g.getGroupAdmins().containsKey(u.getUserID())){
-           g.removeAdmin(u.getUserID());
+       User user = userdao.getUser(userID);
+       
+       g.removeUser(user.getUserID());
+       user.removeGroup(g.getGroupID());
+       
+       if(g.getGroupAdmins().containsKey(user.getUserID())){
+           g.removeAdmin(user.getUserID());
        }
        saveGroups();
        userdao.saveUsers();
     }
     
-    public void promoteToAdmin(int groupID, User u){
+    public void promoteToAdmin(int groupID, int userID){
         Group g = allgroups.get(groupID);
-        if(g.getUserlist().containsValue(u)){
+        User u = userdao.getUser(userID);
+        if(g.getUserlist().containsKey(userID)){
             g.addAdmin(u);
         }
         saveGroups();
@@ -214,7 +215,7 @@ public class GroupDao {
     /*
     Return all the groups
     */
-    public TreeMap<Integer, Group> getGroups(){
+    public ConcurrentSkipListMap<Integer, Group> getGroups(){
         
         return allgroups;
     }

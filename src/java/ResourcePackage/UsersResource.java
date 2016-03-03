@@ -39,8 +39,15 @@ public class UsersResource {
     
     @POST
     @Produces("text/plain")
-    public String registerNewUser(@FormParam("name") String name, @FormParam("password") String password) {
-        return userdao.createUser(name, password);
+    public Response registerNewUser(@FormParam("name") String name, @FormParam("password") String password
+            , @FormParam("firstname") String firstname, @FormParam("lastname") String lastname, @FormParam("email") String email) {
+        boolean userCreationResult = userdao.createUser(name, password,firstname,lastname,email);
+        
+        if(userCreationResult){
+            return Response.status(200).entity("New user created").build(); 
+        }else{
+            return Response.status(400).entity("User couldn't be created because of invalid data").build(); 
+        }
         //return Response.status(200).entity("addUser is called, name : " +  + ", age : " + ).build();
     }
     
@@ -57,21 +64,10 @@ public class UsersResource {
     @GET
     @Path("/{userid}")
     @Produces(MediaType.APPLICATION_XML)
-    public Response getUserXML(@PathParam("userid") int userid, @Context HttpHeaders headers) {
+    public Response getUserXML(@PathParam("userid") int userid) {
         
         if(userdao.getUsers().containsKey(userid)){
-            if(headers.getRequestHeaders().keySet().contains("authorization")){
-                String authCredentials = headers.getRequestHeader("authorization").get(0);
-                boolean authResult = userdao.authenticateUser(authCredentials);
-                int myID = userdao.getUserByName(userdao.decodeUsername(authCredentials)).getUserID();
-                if(authResult && myID == userid){
-                    return Response.status(200).entity(userdao.getUser(userid)).build(); 
-                }else{
-                   return Response.status(401).entity("Authorization failed.").build(); 
-                }
-            }else{
-                return Response.status(401).entity("Authorization failed.").build();
-            }
+           return Response.status(200).entity(userdao.getUser(userid)).build();  
         }else{
             return Response.status(404).entity("User not found").build();
         }
@@ -79,7 +75,8 @@ public class UsersResource {
     
     @PUT
     @Path("/{userid}")
-    public Response updateUser(@PathParam("userid") int userid,@FormParam("name") String name, @Context HttpHeaders headers) {
+    public Response updateUser(@PathParam("userid") int userid,@FormParam("username") String username,
+            @FormParam("firstname") String firstname,@FormParam("lastname") String lastname,@FormParam("email") String email, @Context HttpHeaders headers) {
         
         if(userdao.getUsers().containsKey(userid)){
             if(headers.getRequestHeaders().keySet().contains("authorization")){
@@ -88,8 +85,43 @@ public class UsersResource {
                 int myID = userdao.getUserByName(userdao.decodeUsername(authCredentials)).getUserID();
                 
                 if(authResult && myID == userid){
-                    userdao.updateUser(userid, name);
-                    return Response.status(200).entity("Updated user"+userid+" username to "+name).build();
+                    System.out.println("NEw values"+userid+" "+username+" "+firstname+" "+lastname+" "+email);
+                    boolean updateStatus = userdao.updateUser(userid, username,firstname,lastname,email);
+                    User u = userdao.getUser(userid);
+                    System.out.println("gr: "+u.getUsername()+" "+u.getFirstname()+" "+u.getLastname()+" "+u.getEmail());
+                    if(updateStatus){
+                        return Response.status(200).entity("Updated user"+userid).build();
+                    }else{
+                        return Response.status(400).entity("Values were invalid.").build();
+                    }
+                }else{
+                   return Response.status(401).entity("Authorization failed.").build(); 
+                }
+            }else{
+                return Response.status(401).entity("Authorization failed.").build();
+            }
+        }else{
+           return Response.status(404).entity("User not found").build();
+        }
+    }
+    @PUT
+    @Path("/{userid}/password")
+    public Response updateUserPassword(@PathParam("userid") int userid,@FormParam("password") String password, @Context HttpHeaders headers) {
+        
+        if(userdao.getUsers().containsKey(userid)){
+            if(headers.getRequestHeaders().keySet().contains("authorization")){
+                String authCredentials = headers.getRequestHeader("authorization").get(0);
+                boolean authResult = userdao.authenticateUser(authCredentials);
+                int myID = userdao.getUserByName(userdao.decodeUsername(authCredentials)).getUserID();
+                
+                if(authResult && myID == userid){
+                    
+                    boolean updateStatus = userdao.updatePassword(userid, password);
+                    if(updateStatus){
+                        return Response.status(200).entity("Updated user"+userid+" password.").build();
+                    }else{
+                        return Response.status(400).entity("New password was invalid.").build();
+                    }
                 }else{
                    return Response.status(401).entity("Authorization failed.").build(); 
                 }
@@ -186,13 +218,6 @@ public class UsersResource {
         }    
     }
     
-    @GET
-    @Path("/{userid}/name")
-    @Produces("text/plain")
-    public String getUserName(@PathParam("userid") int userid) {
-        return userdao.getUser(userid).getUsername();
-    }
-    
     @POST
     @Path("/login")
     @Produces(MediaType.APPLICATION_XML)
@@ -209,12 +234,4 @@ public class UsersResource {
         }
         
     }
-    /* POSSIBLY UNNEEDED
-    @POST
-    @Path("/logout")
-    public Response logoutUser(@Context HttpServletRequest request) {
-        
-        return Response.status(200).entity("User logged out").build();
-    }
-    */
 }

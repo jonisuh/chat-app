@@ -29,20 +29,19 @@
             <div id="inputToggle2"  style="display: none">
                 <p>Create a new user: </p>
                 
-                    <input type="text" name="name" id="newUsername" placeholder = "Username"><br>
-                    <input type="password" name="password" id="newPassword" placeholder = "Password"><br>
-                    <input type="password" name="passwordagain" id="newPasswordAgain" placeholder = "Password again"><br>
-                    <input type="text" name="fname" id="firstname" placeholder = "First name"><br>
-                    <input type="text" name="lname" id="lastname" placeholder = "Last name"><br>
-                    <input type="text" name="email" id="email" placeholder = "Email"><br>
+                <input type="text" name="name" id="newUsername" placeholder = "Username"><div class="registrationArrow" id="usernameArrow">◀</div><div class="registrationError" id="usernameError"></div>
+                    <input type="password" name="password" id="newPassword" placeholder = "Password"><div class="registrationArrow" id="passwordArrow">◀</div><div class="registrationError" id="passwordError"></div>
+                    <input type="password" name="passwordagain" id="newPasswordAgain" placeholder = "Password again"><div class="registrationArrow" id="newpassArrow">◀</div><div class="registrationError" id="passwordAgainError"></div>
+                    <input type="text" name="fname" id="firstname" placeholder = "First name"><div class="registrationArrow" id="fnameArrow">◀</div><div class="registrationError" id="firstnameError"></div>
+                    <input type="text" name="lname" id="lastname" placeholder = "Last name"><div class="registrationArrow" id="lnameArrow">◀</div><div class="registrationError" id="lastnameError"></div>
+                    <input type="email" name="email" id="email" placeholder = "Email"><div class="registrationArrow" id="emailArrow">◀</div><div class="registrationError" id="emailError"></div><br>
                   <button style="font-size: 20px ; margin-top: 5px;"id="createButton">Create</button>
-                  <div id="errorDiv">
-                      
-                  </div>
+                  
             </div>
 
 
 
         </div>
+        
     </body>
 </html>

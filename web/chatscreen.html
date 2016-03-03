@@ -7,7 +7,6 @@
         <meta name="viewport" content="width=device-width, initial-scale=1" /> 
         <link rel="stylesheet" type="text/css" href="chatCss.css">
         <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
-        <!-- <script type="text/javascript" src="chatScript.js"></script> -->
         <script type="text/javascript" src="wipChatScript.js"></script>
         <script type="text/javascript" src="AddGroupScript.js"></script>
 
@@ -20,8 +19,6 @@
             <div id="welcome">
                 <h1><a href="#">Basic Chat</a></h1> 
             </div>
-
-
             <nav id="menu_items">
 
              <!--   <span> <a href="/ProjectV1/chatscreen.html">Home</a>  </span>
@@ -79,6 +76,25 @@
                             <div id="saveGroupInfo">Save</div>
                             <p id="groupUpdateErrors"></p>
                         </div>
+                        <!-- Promote to admin-->
+                        <div id="promoteUsersToAdmin">
+                            <p>Promote users to admin </p>
+                            <div class="promoteUsersList"></div>
+                        </div>
+                        <div id="myInformation">
+                            <p style="margin: 0; padding: 0;">Account details</p>
+                            <div class="myinfoselector" id="showbasicInfo">Basic details</div>
+                            <div class="myinfoselector" id="changePassword">Password</div>
+                            <div id="myInformationWrapper"></div>
+                            <div id="myInformationPasswordWrapper">
+                            </div>
+                            <div id="myInformationButtons">
+                                <div class="myinfobutton" id="editMyInfo">Edit</div>
+                                <div class="myinfobutton" id="saveMyInfo">Save</div>
+                                <div class="myinfobutton" id="cancelEditMyInfo">Cancel</div>
+                                <div class="myinfobutton" id="saveNewPassword">Save password</div>
+                            </div>
+                        </div>
                     </div>
                  </div>
                  <div class="sidebar_buttons" id="sidebars_on">
@@ -115,8 +131,9 @@
                     </div>
 
                     <div id="inputfield">
-                        <textarea id="message"></textarea><button id="sendMessage">Send</button>
-                    </div>                  
+                        <textarea id="message"></textarea><div id="sendMessage"><h3>Send</h3></div>
+                    </div>
+                    <div id="charactersRemaining"></div>
                 </div> 
 
 

@@ -36,13 +36,7 @@ $(document).ready(function() {
                 "Authorization": headerString
             },statusCode: {
                 200: function (response) {
-                    
-               },
-               401: function (response) {
-                  alert('Invalid login.');
-               }
-            }, success: function (loginResponse) {
-                $('returninformation', loginResponse).each(function () {   
+                $('returninformation', response).each(function () {   
                     var userID = $(this).find("userID").text();
                     var credentials = $(this).find("authCred").text();
                     sessionStorage.setItem("credentials", credentials);
@@ -51,7 +45,11 @@ $(document).ready(function() {
                     console.log(sessionStorage.userID);
                 });
                 window.location.href = "/ProjectV1/chatscreen.html";
-            }        
+               },
+               401: function (response) {
+                  alert('Invalid login.');
+               }
+            }      
         });
         
     });
@@ -65,23 +63,100 @@ $(document).ready(function() {
     $("#createButton").click(function(){
         var newName = $("#newUsername").val();
         var newPass = $("#newPassword").val();
-        if(newName && newPass){
+        var fname = $("#firstname").val();
+        var lname = $("#lastname").val();
+        var email = $("#email").val();
+        var validation = validateInput();
+        if(validation === true){
             $.ajax({
             type: "POST",
             url: "/ProjectV1/API/Users/",
-            data: {name: newName,password: newPass}
-            ,success: function (createUserResponse) {
-                $("#errorDiv").html(createUserResponse);
-                if(createUserResponse.indexOf("User created") > -1){
+            data: {name: newName,password: newPass,firstname: fname,lastname: lname,email: email},
+            statusCode: {
+                200: function (response) {
                     $("#username").val(newName);
                     $("#password").val(newPass);
                     $("#loginButton").click();
-                }
-                console.log(createUserResponse);
-            }        
+               },
+               400: function (response) {
+                  
+               }
+            }     
          });
         }
     });
+    
+    function validateInput(){
+        var newName = $("#newUsername").val();
+        var newPass = $("#newPassword").val();
+        var passwordAgain = $("#newPasswordAgain").val();
+        var fname = $("#firstname").val();
+        var lname = $("#lastname").val();
+        var email = $("#email").val();
+        
+        $(".registrationError").html("");
+        $(".registrationError").hide();
+        $(".registrationArrow").hide();
+        
+        var validationResult = true;
+        
+        if(!newName){
+            $("#usernameError").html("You must fill this field!").show();
+            $("#usernameArrow").css("display","inline-block");
+            validationResult = false;
+        } 
+        if(newName.length > 16){
+            $("#usernameError").html("Username can't be longer than 16 letters!").show();
+            $("#usernameArrow").css("display","inline-block");
+            validationResult = false;
+        }
+        if(!newPass){
+            $("#passwordError").html("You must fill this field!").show();
+            $("#passwordArrow").css("display","inline-block");
+            validationResult = false;
+        }
+        if(newPass.length > 16){
+            $("#passwordError").html("Password can't be longer than 16 letters!").show();
+            $("#passwordArrow").css("display","inline-block");
+            validationResult = false;
+        }
+        if(newPass != passwordAgain || !passwordAgain){
+            $("#passwordAgainError").html("Passwords don't match!").show();
+            $("#newpassArrow").css("display","inline-block");
+            validationResult = false;
+        }
+        if(!fname){
+            $("#firstnameError").html("You must fill this field!").show();
+            $("#fnameArrow").css("display","inline-block");
+            validationResult = false;
+        }
+        if(fname.length > 16){
+            $("#firstnameError").html("First name can't be longer than 16 letters!").show();
+            $("#fnameArrow").css("display","inline-block");
+            validationResult = false;
+        }
+        if(!lname){
+            $("#lastnameError").html("You must fill this field!").show();
+            $("#lnameArrow").css("display","inline-block");
+            validationResult = false;
+        }
+        if(lname.length > 16){
+            $("#lastnameError").html("Last name can't be longer than 16 letters!").show();
+            $("#lnameArrow").css("display","inline-block");
+            validationResult = false;
+        }
+        if(!email){
+            $("#emailError").html("You must fill this field!").show();
+            $("#emailArrow").css("display","inline-block");
+            validationResult = false;
+        }
+        if(email.length > 16){
+            $("#emailError").html("Last name can't be longer than 16 letters!").show();
+            $("#emailArrow").css("display","inline-block");
+            validationResult = false;
+        }
+        return validationResult;
+    }
     
     $(".index_buttons").click(function(){
         $(".index_buttons").css("background-color","#6394cf");
@@ -89,12 +164,18 @@ $(document).ready(function() {
     });
     
      $("#login_form").click(function(){
+         $(".registrationError").html("");
+        $(".registrationError").hide();
+        $(".registrationArrow").hide();
         
         $("#inputToggle2").hide();
         $("#inputToggle").show(); 
     });
     
     $("#create_form").click(function(){
+         $(".registrationError").html("");
+        $(".registrationError").hide();
+        $(".registrationArrow").hide();
         
         $("#inputToggle").hide();
         $("#inputToggle2").show(); 
