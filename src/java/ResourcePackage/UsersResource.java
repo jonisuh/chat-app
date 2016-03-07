@@ -40,15 +40,14 @@ public class UsersResource {
     @POST
     @Produces("text/plain")
     public Response registerNewUser(@FormParam("name") String name, @FormParam("password") String password
-            , @FormParam("firstname") String firstname, @FormParam("lastname") String lastname, @FormParam("email") String email) {
-        boolean userCreationResult = userdao.createUser(name, password,firstname,lastname,email);
+            , @FormParam("firstname") String firstname, @FormParam("lastname") String lastname,  @FormParam("department") String department, @FormParam("title") String title,@FormParam("email") String email) {
+        boolean userCreationResult = userdao.createUser(name, password,firstname,lastname,department,title,email);
         
         if(userCreationResult){
             return Response.status(200).entity("New user created").build(); 
         }else{
             return Response.status(400).entity("User couldn't be created because of invalid data").build(); 
         }
-        //return Response.status(200).entity("addUser is called, name : " +  + ", age : " + ).build();
     }
     
     @GET
@@ -76,8 +75,8 @@ public class UsersResource {
     @PUT
     @Path("/{userid}")
     public Response updateUser(@PathParam("userid") int userid,@FormParam("username") String username,
-            @FormParam("firstname") String firstname,@FormParam("lastname") String lastname,@FormParam("email") String email, @Context HttpHeaders headers) {
-        
+            @FormParam("firstname") String firstname,@FormParam("lastname") String lastname, @FormParam("department") String department,@FormParam("title") String title, @FormParam("email") String email, @Context HttpHeaders headers) {
+        System.out.println("test");
         if(userdao.getUsers().containsKey(userid)){
             if(headers.getRequestHeaders().keySet().contains("authorization")){
                 String authCredentials = headers.getRequestHeader("authorization").get(0);
@@ -86,7 +85,7 @@ public class UsersResource {
                 
                 if(authResult && myID == userid){
                     System.out.println("NEw values"+userid+" "+username+" "+firstname+" "+lastname+" "+email);
-                    boolean updateStatus = userdao.updateUser(userid, username,firstname,lastname,email);
+                    boolean updateStatus = userdao.updateUser(userid, username,firstname,lastname,department,title,email);
                     User u = userdao.getUser(userid);
                     System.out.println("gr: "+u.getUsername()+" "+u.getFirstname()+" "+u.getLastname()+" "+u.getEmail());
                     if(updateStatus){

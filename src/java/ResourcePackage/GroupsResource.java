@@ -142,9 +142,6 @@ public class GroupsResource {
                         }
                         for (User u : removedusers) {
                             groupdao.removeUserFromGroup(groupid, u.getUserID());
-                            if (u.getGrouplist().containsKey(groupid)) {
-                                System.out.println("Vituiks meni " + u.getUserID() + " " + groupid);
-                            }
                         }
 
                         System.out.println(groupdao.getGroup(groupid).getUserlist().size());

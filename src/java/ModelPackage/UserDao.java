@@ -87,7 +87,7 @@ public class UserDao {
     /*
     Registers a new user.
     */
-    public Boolean createUser(String username, String password, String firstname, String lastname, String email){
+    public Boolean createUser(String username, String password, String firstname, String lastname,String department, String title, String email){
         boolean validinformation = true;
         
         if(username.length() > 16){
@@ -150,6 +150,20 @@ public class UserDao {
             System.out.println("Name is too long.");
         }
          
+          //Validating lastname
+        if(department.length() < 0 || department == null ||department.equals(" ") ||department.equals("")){
+            validinformation = false;
+            System.out.println("Department name is empty.");
+        }
+        if(!department.matches("^[a-zA-Z0-9]*$")){
+            validinformation = false;
+            System.out.println("Department name is not alphanumeric");
+        }
+         if(department.length() > 20){
+            validinformation = false;
+            System.out.println("Department is too long.");
+        }
+         
          //Validating email
          if(email.length() < 0 || email == null ||email.equals(" ") ||email.equals("")){
             validinformation = false;
@@ -170,7 +184,7 @@ public class UserDao {
             }
             String cryptedpassword = encryptPassword(password);
             
-            User u = new User(username,cryptedpassword,firstname,lastname,email,userID);
+            User u = new User(username,cryptedpassword,firstname,lastname,department,title,email,userID);
             this.allusers.put(userID,u);
             saveUsers();
             System.out.println("User created with userID: "+userID);
@@ -189,7 +203,7 @@ public class UserDao {
     /*
     Updates user values.
     */
-    public Boolean updateUser(int userID, String username,String firstname, String lastname, String email){
+    public Boolean updateUser(int userID, String username,String firstname, String lastname,String department, String title, String email){
         User u = allusers.get(userID);
         
         boolean validinformation = true;
@@ -262,6 +276,7 @@ public class UserDao {
             u.setFirstname(firstname);
             u.setLastname(lastname);
             u.setEmail(email);
+            
             System.out.println(u.getUsername()+" "+u.getFirstname()+" "+u.getLastname()+" "+u.getEmail());
             saveUsers();
         }

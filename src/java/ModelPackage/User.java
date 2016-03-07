@@ -13,8 +13,10 @@ public class User implements Serializable {
     private HashMap<Integer,Message> usermessages;
     private String username;
     private String password;
-    private String firstname; //TODO
+    private String firstname; 
     private String lastname;
+    private String department;
+    private String title;
     private String email;
     private int userID;
     
@@ -22,13 +24,15 @@ public class User implements Serializable {
         
     }
     
-    public User(String username, String password, String firstname, String lastname, String email, int userID){
+    public User(String username, String password, String firstname, String lastname, String department, String title, String email, int userID){
         this.usermessages = new HashMap<Integer, Message>();
         this.grouplist = new HashMap<Integer, Group>();
         this.username = username;
         this.password = password;
         this.firstname = firstname;
         this.lastname = lastname;
+        this.department = department;
+        this.title= title;
         this.email = email;
         this.userID = userID;
     }
@@ -76,6 +80,24 @@ public class User implements Serializable {
     
     public void setLastname(String lastname) {
         this.lastname = lastname;
+    }
+    
+    @XmlElement
+    public String getDepartment() {
+        return department;
+    }
+    
+    public void setDepartment(String department) {
+        this.department = department;
+    }
+    
+    @XmlElement
+    public String getTitle() {
+        return title;
+    }
+    
+    public void setTitle(String title) {
+        this.title = title;
     }
     
     @XmlElement

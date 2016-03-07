@@ -65,13 +65,15 @@ $(document).ready(function() {
         var newPass = $("#newPassword").val();
         var fname = $("#firstname").val();
         var lname = $("#lastname").val();
+        var department = $("#department").val();
+        var title = $("#title").val();
         var email = $("#email").val();
         var validation = validateInput();
         if(validation === true){
             $.ajax({
             type: "POST",
             url: "/ProjectV1/API/Users/",
-            data: {name: newName,password: newPass,firstname: fname,lastname: lname,email: email},
+            data: {name: newName,password: newPass,firstname: fname,lastname: lname,department:department,title: title,email: email},
             statusCode: {
                 200: function (response) {
                     $("#username").val(newName);
@@ -150,8 +152,8 @@ $(document).ready(function() {
             $("#emailArrow").css("display","inline-block");
             validationResult = false;
         }
-        if(email.length > 16){
-            $("#emailError").html("Last name can't be longer than 16 letters!").show();
+        if(email.length > 30){
+            $("#emailError").html("Last name can't be longer than 30 letters!").show();
             $("#emailArrow").css("display","inline-block");
             validationResult = false;
         }

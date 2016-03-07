@@ -57,9 +57,9 @@ $(document).ready(function () {
                                 "Authorization": basicCredentials
                             },success: function () {
                                 $("#noGroupsFound").remove();
-                                $("#groupWrapper").prepend("<div class='group' id='group_" + createdGroupID + "'><h3>" + groupname + "</h3><span class='moreGroupInfo'>▼</span></div>");
+                                $("#groupWrapper").append("<div class='group' id='group_" + createdGroupID + "'><h3>" + groupname + "</h3><span class='moreGroupInfo'>▼</span></div>");
                                 $("#group_" + createdGroupID).append("<div class='groupInformation' id='group_" + createdGroupID + "_info'><hr>\n\
-                                <div class='leaveThisGroupButton userInfoButton' id='leaveGroup_" + createdGroupID + "'><img src='pictures/hide.png' alt='Leave group' title='Leave group' height='20' width='20'></div>\n\
+                                <div class='leaveThisGroupButton userInfoButton' id='leaveGroup_" + createdGroupID + "'><img src='pictures/leave.png' alt='Leave group' title='Leave group' height='20' width='20'></div>\n\
                                 </div>");
                             
                                 var thisGroupAdmins = [];
@@ -77,7 +77,7 @@ $(document).ready(function () {
                                         });
 
                                         if ($.inArray(myID, thisGroupAdmins) > -1) {
-                                            $("#group_" + createdGroupID + "_info").append("<div class='deleteThisGroupButton userInfoButton' id='deleteGroup_" + createdGroupID + "'><img src='pictures/hide.png' alt='Delete group' title='Delete group' height='20' width='20'></div>");
+                                            $("#group_" + createdGroupID + "_info").append("<div class='deleteThisGroupButton userInfoButton' id='deleteGroup_" + createdGroupID + "'><img src='pictures/deletegroup.png' alt='Delete group' title='Delete group' height='20' width='20'></div>");
                                         }
                                     }
                                 });
@@ -130,7 +130,7 @@ $(document).ready(function () {
                    $("#createGroup").hide();
                 }, 100);
                 $("#noGroupsFound").remove();
-                $("#groupWrapper").prepend("<div class='group' id='group_" + createdGroupID + "'><h3>" + groupname + "</h3><span class='moreGroupInfo'>▼</span></div>");
+                $("#groupWrapper").append("<div class='group' id='group_" + createdGroupID + "'><h3>" + groupname + "</h3><span class='moreGroupInfo'>▼</span></div>");
                 
                 $("#group_" + createdGroupID).append("<div class='groupInformation' id='group_" + createdGroupID + "_info'><hr>\n\
                 <div class='leaveThisGroupButton userInfoButton' id='leaveGroup_" + createdGroupID + "'><img src='pictures/hide.png' alt='Leave group' title='Leave group' height='20' width='20'></div>\n\

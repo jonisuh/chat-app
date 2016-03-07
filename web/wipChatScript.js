@@ -52,7 +52,7 @@ $(document).ready(function () {
                         $("#groupWrapper").append("<div class='group' id='group_" + groupID + "'><h3>" + groupName + "</h3><span class='moreGroupInfo'>▼</span></div>");
 
                         $("#group_" + groupID).append("<div class='groupInformation' id='group_" + groupID + "_info'><hr>\n\
-                        <div class='leaveThisGroupButton userInfoButton' id='leaveGroup_" + groupID + "'><img src='pictures/hide.png' alt='Leave group' title='Leave group' height='20' width='20'></div>\n\
+                        <div class='leaveThisGroupButton userInfoButton' id='leaveGroup_" + groupID + "'><img src='pictures/leave.png' alt='Leave group' title='Leave group' height='20' width='20'></div>\n\
                         </div>");
 
                         var thisGroupAdmins = [];
@@ -70,7 +70,7 @@ $(document).ready(function () {
                                 });
 
                                 if ($.inArray(userID, thisGroupAdmins) > -1) {
-                                    $("#group_" + groupID + "_info").append("<div class='deleteThisGroupButton userInfoButton' id='deleteGroup_" + groupID + "'><img src='pictures/hide.png' alt='Delete group' title='Delete group' height='20' width='20'></div>");
+                                    $("#group_" + groupID + "_info").append("<div class='deleteThisGroupButton userInfoButton' id='deleteGroup_" + groupID + "'><img src='pictures/deletegroup.png' alt='Delete group' title='Delete group' height='20' width='20'></div>");
                                 }
                             }
                         });
@@ -95,7 +95,9 @@ $(document).ready(function () {
                     var thisfirstName = $(this).find("firstname").text();
                     var thislastName = $(this).find("lastname").text();
                     var thisEmail = $(this).find("email").text();
-
+                    var thisDepartment = $(this).find("department").text();
+                    var thisTitle = $(this).find("title").text();
+                    
                     var userInfoButton = "<span class='loadMoreUserInfo'>▼</span>";
                     if (parseInt(thisuserID) === parseInt(userID)) {
                         thisuserName = "Me";
@@ -106,8 +108,10 @@ $(document).ready(function () {
                     $("#user_" + thisuserID).append("<div class='userinformation' id='user_" + thisuserID + "_info'>\n\
                     <hr><p>" + thisfirstName + "</p>\n\
                     <p>" + thislastName + "</p>\n\
+                    <p>" + thisDepartment + "</p>\n\
+                    <p>" + thisTitle + "</p>\n\
                     <p>" + thisEmail + "</p><hr>\n\
-                    <div class='startChatWithUser userInfoButton' id='startWithUser_" + thisuserID + "'><img src='pictures/hide.png' alt='New chat' title='New chat' height='20' width='20'></div>\n\
+                    <div class='startChatWithUser userInfoButton' id='startWithUser_" + thisuserID + "'><img src='pictures/newchat.png' alt='New chat' title='New chat' height='20' width='20'></div>\n\
                     </div>");
                 });
                 $("#userlist").append("</div>");
@@ -116,7 +120,7 @@ $(document).ready(function () {
 
         $("#placeholder").attr("id", userID);
     }
-    //$("#message").keyup(function () {
+    
     $("#message").on('input', function () {
 
         while ($("#message").val().length > 500) {
@@ -223,11 +227,11 @@ $(document).ready(function () {
                 if ($.inArray(userID, adminIDArray) > -1) {
                     isAdmin = true;
                     $(".groupbuttons").append("<hr>");
-                    $(".groupbuttons").append("<span id='addusertogroup'>Add user</span>");
-                    $(".groupbuttons").append("<span id='removeuserfromgroup'>Remove user</span>");
-                    $(".groupbuttons").append("<span id='promoteuser'>Promote to admin</span>");
-                    $(".groupbuttons").append("<span id='modifygroup'>Modify group info</span>");
-                    $(".groupbuttons").append("<span id='deletegroup'>Delete group</span>");
+                    $(".groupbuttons").append("<span id='addusertogroup'><img src='pictures/adduserb.png' alt='Account' title='Account' height='20' width='20'>Add user</span>");
+                    $(".groupbuttons").append("<span id='removeuserfromgroup'><img src='pictures/removeuserb.png' alt='Account' title='Account' height='20' width='20'>Remove user</span>");
+                    $(".groupbuttons").append("<span id='promoteuser'><img src='pictures/promoteuserb.png' alt='Account' title='Account' height='20' width='20'>Promote to admin</span>");
+                    $(".groupbuttons").append("<span id='modifygroup'><img src='pictures/editgroupb.png' alt='Account' title='Account' height='20' width='20'>Modify group info</span>");
+                    $(".groupbuttons").append("<span id='deletegroup'><img src='pictures/deletegroupb.png' alt='Account' title='Account' height='20' width='20'>Delete group</span>");
 
                 }
                 //Loading users
@@ -246,6 +250,9 @@ $(document).ready(function () {
                             var thisfirstName = $(this).find("firstname").text();
                             var thislastName = $(this).find("lastname").text();
                             var thisEmail = $(this).find("email").text();
+                            var thisDepartment = $(this).find("department").text();
+                            var thisTitle = $(this).find("title").text();
+                            
                             var userInfoButton = "<span class='loadMoreUserInfo'>▼</span>";
                             if (parseInt(thisuserID) === parseInt(userID)) {
                                 thisuserName = "Me";
@@ -255,16 +262,18 @@ $(document).ready(function () {
                             $("#user_" + thisuserID).append("<div class='userinformation' id='user_" + thisuserID + "_info'>\n\
                             <hr><p>" + thisfirstName + "</p>\n\
                             <p>" + thislastName + "</p>\n\
+                            <p>" + thisDepartment + "</p>\n\
+                            <p>" + thisTitle + "</p>\n\
                             <p>" + thisEmail + "</p><hr>\n\
-                            <div class='startChatWithUser userInfoButton' id='startWithUser_" + thisuserID + "'><img src='pictures/hide.png' alt='New chat' title='New chat' height='20' width='20'></div>\n\
+                            <div class='startChatWithUser userInfoButton' id='startWithUser_" + thisuserID + "'><img src='pictures/newchat.png' alt='New chat' title='New chat' height='20' width='20'></div>\n\
                             </div>");
                             if ($.inArray(thisuserID, adminIDArray) > -1) {
-                                //$("#user_" + thisuserID + " h3").append("<span style='float: right;'>A</span>");
+                                $("#user_" + thisuserID + " h3").after("<div class='adminIcon'><img src='pictures/admin.png' alt='Admin' title='Admin' height='15' width='15'></div>");
                             }
                             if (isAdmin === true) {
-                                $("#user_" + thisuserID + "_info").append("<div class='userInfoRemoveButton userInfoButton' id='uInfoRemoveUser_" + thisuserID + "'><img src='pictures/hide.png' alt='Remove user' title='Remove user' height='20' width='20'></div>");
+                                $("#user_" + thisuserID + "_info").append("<div class='userInfoRemoveButton userInfoButton' id='uInfoRemoveUser_" + thisuserID + "'><img src='pictures/removeuser.png' alt='Remove user' title='Remove user' height='20' width='20'></div>");
                                 if ($.inArray(thisuserID, adminIDArray) === -1) {
-                                    $("#user_" + thisuserID + "_info").append("<div class='userInfoPromoteButton userInfoButton' id='uInfoPromoteUser_" + thisuserID + "'><img src='pictures/hide.png' alt='Promote user' title='Promote user' height='20' width='20'></div>");
+                                    $("#user_" + thisuserID + "_info").append("<div class='userInfoPromoteButton userInfoButton' id='uInfoPromoteUser_" + thisuserID + "'><img src='pictures/promoteuser.png' alt='Promote user' title='Promote user' height='20' width='20'></div>");
                                 }
 
                             }
@@ -322,7 +331,7 @@ $(document).ready(function () {
             }
         });
 
-        $(".groupbuttons").append("<span id='leavegroup'>Leave group</span>");
+        $(".groupbuttons").append("<span id='leavegroup'><img src='pictures/leaveb.png' alt='Account' title='Account' height='20' width='20'>Leave group</span>");
 
 
 
@@ -349,16 +358,6 @@ $(document).ready(function () {
         websocket.send(msg);
     }
 
-    /*
-     // For testing purposes
-     function onOpen(event) {
-     //writeToScreen('Connected to ' + wsUri);
-     }
-     
-     function writeToScreen(message) {
-     //$('#messageSpace').append(message + '<br>');
-     }
-     */
     function checkMessages(groupID) {
 
         $.ajax({
@@ -501,12 +500,9 @@ $(document).ready(function () {
         $("#sidebars").toggle();
 
         if ($('#sidebars').css('display') == 'block') {
-            $("#content").css("margin-left", 5);
+            $("#sidebars_on").html("<img src='pictures/hide.png' alt='Hide sidebars' title='Hide sidebars' height='30' width='30'>");
         } else {
-            var containerWidth = $("#site_content").width();
-            var contentWidth = $("#content").width();
-            var marginspace = (containerWidth - contentWidth) / 2 - 9;
-            $("#content").css("margin-left", marginspace);
+            $("#sidebars_on").html("<img src='pictures/show.png' alt='Show sidebars' title='Show sidebars' height='30' width='30'>");
         }
     });
 
@@ -622,26 +618,31 @@ $(document).ready(function () {
                                     var thisfirstName = $(user).find("firstname").text();
                                     var thislastName = $(user).find("lastname").text();
                                     var thisEmail = $(user).find("email").text();
+                                    var thisDepartment = $(user).find("department").text();
+                                    var thisTitle = $(this).find("title").text();
+                                    
                                     var userInfoButton = "<span class='loadMoreUserInfo'>▼</span>";
                                     if (parseInt(thisuserID) === parseInt(userID)) {
                                         thisuserName = "Me";
                                         userInfoButton = "";
                                     }
-                                    $("#userlist").append("<div class='usercontainer' id='user_" + thisuserID + "'><h3>" + thisuserName + userInfoButton + "</h3></div>");
+                                    $("#userlist").append("<div class='usercontainer' id='user_" + thisuserID + "'><h3>" + thisuserName+"</h3>"+userInfoButton+"<br><br></div>");
                                     $("#user_" + thisuserID).append("<div class='userinformation' id='user_" + thisuserID + "_info'>\n\
                                     <hr><p>" + thisfirstName + "</p>\n\
                                     <p>" + thislastName + "</p>\n\
+                                    <p>" + thisDepartment + "</p>\n\
+                                    <p>" + thisTitle + "</p>\n\
                                     <p>" + thisEmail + "</p><hr>\n\
-                                    <div class='startChatWithUser userInfoButton' id='startWithUser_" + thisuserID + "'><img src='pictures/hide.png' alt='New chat' title='New chat' height='20' width='20'></div>\n\
+                                    <div class='startChatWithUser userInfoButton' id='startWithUser_" + thisuserID + "'><img src='pictures/newchat.png' alt='New chat' title='New chat' height='20' width='20'></div>\n\
                                     </div>");
                                     
                                     if ($.inArray(thisuserID, adminIDArray) > -1) {
                                         $("#user_" + thisuserID + " h3").append("<span style='float: right;'>A</span>");
                                     }
                                     if (isAdmin === true) {
-                                        $("#user_" + thisuserID + "_info").append("<div class='userInfoRemoveButton userInfoButton' id='uInfoRemoveUser_" + thisuserID + "'><img src='pictures/hide.png' alt='Remove user' title='Remove user' height='20' width='20'></div>");
+                                        $("#user_" + thisuserID + "_info").append("<div class='userInfoRemoveButton userInfoButton' id='uInfoRemoveUser_" + thisuserID + "'><img src='pictures/removeuser.png' alt='Remove user' title='Remove user' height='20' width='20'></div>");
                                         if ($.inArray(thisuserID, adminIDArray) === -1) {
-                                            $("#user_" + thisuserID + "_info").append("<div class='userInfoPromoteButton userInfoButton' id='uInfoPromoteUser_" + thisuserID + "'><img src='pictures/hide.png' alt='Promote user' title='Promote user' height='20' width='20'></div>");
+                                            $("#user_" + thisuserID + "_info").append("<div class='userInfoPromoteButton userInfoButton' id='uInfoPromoteUser_" + thisuserID + "'><img src='pictures/promoteuser.png' alt='Promote user' title='Promote user' height='20' width='20'></div>");
                                         }
                                     }
                                 }
@@ -880,7 +881,7 @@ $(document).ready(function () {
                 , success: function () {
                     $("#promoteUser_" + clickedUserID).hide("slow").remove();
                     $("#uInfoPromoteUser_" + clickedUserID).remove();
-                    $("#user_"+clickedUserID+" h3").append("<span style='float: right;'>A</span>");
+                    $("#user_"+clickedUserID+" h3").after("<div class='adminIcon'><img src='pictures/admin.png' alt='Admin' title='Admin' height='15' width='15'></div>");
                 }
             });
         }
@@ -1036,9 +1037,10 @@ $(document).ready(function () {
         var newFname = $('#myInfoFname').val();
         var newLname = $('#myInfoLname').val();
         var newEmail = $('#myInfoEmail').val();
-
+        
         var validInformation = true;
         if (!newUsername) {
+            
             validInformation = false;
         }
         if (newUsername.length > 16) {
@@ -1060,13 +1062,14 @@ $(document).ready(function () {
         if (!newEmail) {
             validInformation = false;
         }
-        if (newEmail.length > 16) {
+        if (newEmail.length > 30) {
             validInformation = false;
         }
         if (!$("#confirmationPassword").val()) {
             $("#confirmationPassword").focus();
             validInformation = false;
         }
+        
         if (validInformation === true) {
             $.ajax({
                 type: "PUT",
@@ -1129,7 +1132,46 @@ $(document).ready(function () {
             $("#changePassword").css("border-color", "#6394cf");
         }
     });
-
+    
+    $("#showSearch").click(function(){
+        $("#searchInput").val("");
+        $("#searchBox").slideToggle("fast");
+    });
+    
+    $("#searchInput").on('input', function () {
+        var searchterm = $(this).val().toLowerCase();
+        if(searchterm){
+            $(".usercontainer").each(function(){
+                var info = [];
+                info.push($(this).find("h3").text().toLowerCase());
+                
+                $(this).find("p").each(function(){
+                    info.push($(this).text().toLowerCase());
+                });
+                
+                //Checking if searchterm is contained in user info
+                var stringInInfo = false;
+                
+                for (var i = 0; i < info.length ; i++) {
+                    if(info[i].indexOf(searchterm) > -1){
+                        stringInInfo = true;
+                    }
+                }
+                
+                if(stringInInfo === true){
+                    $(this).show(200);
+                }else{
+                    $(this).hide(200);
+                }
+            });
+        }else{
+             $(".usercontainer").show();
+        }
+    });
+    
+    
+    
+    
     $('#grouplist').bind('scroll', chk_scroll);
     function chk_scroll(e)
     {
