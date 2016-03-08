@@ -1,7 +1,11 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+This is the Groups Resource of the REST API. This resource mainly accepts API calls to the /Groups/ path and then passes
+the data to the GroupDao class to manipulate groups and messages.
+
+API calls regarding creation and reading of messages is handled from this resource because the relation between
+messages and groups is logical (Messages can't exist outside of a group).
+
+Most of the methods return a HTTP Response with the standard codes depending on the input.
  */
 package ResourcePackage;
 
@@ -15,9 +19,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.Produces;
-import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
@@ -35,8 +37,6 @@ public class GroupsResource {
 
     private final GroupDao groupdao;
     private final UserDao userdao;
-    @Context
-    private UriInfo context;
 
     public GroupsResource() {
         groupdao = GroupDao.getInstance();
@@ -62,8 +62,10 @@ public class GroupsResource {
                 boolean authResult = userdao.authenticateUser(authCredentials);
                 int myID = userdao.getUserByName(userdao.decodeUsername(authCredentials)).getUserID();
                 if (authResult && myID == starterID) {
+
                     User groupstarter = userdao.getUser(starterID);
                     int groupID = groupdao.createGroup(groupname, groupstarter);
+
                     if (groupID != 0) {
                         return Response.status(201).entity(groupID).build();
                     } else {
@@ -133,18 +135,19 @@ public class GroupsResource {
                 int myID = userdao.getUserByName(userdao.decodeUsername(authCredentials)).getUserID();
                 if (authResult) {
                     if (groupdao.getGroup(groupid).getGroupAdmins().containsKey(myID)) {
-                        //Removing the group from all users within the group
+                        /*
+                        Removing the group from all users that are currently members of the group.
+                        Users are added into an arraylist that is separate from the actual groups userlist
+                        to avoid issues with removing entries while iterating.
+                         */
                         Group g = groupdao.getGroup(groupid);
                         ArrayList<User> removedusers = new ArrayList<User>();
                         for (Map.Entry<Integer, User> entry : g.getUserlist().entrySet()) {
                             removedusers.add(entry.getValue());
-                            //groupdao.removeUserFromGroup(groupid, entry.getValue());
                         }
                         for (User u : removedusers) {
                             groupdao.removeUserFromGroup(groupid, u.getUserID());
                         }
-
-                        System.out.println(groupdao.getGroup(groupid).getUserlist().size());
                         return Response.status(200).entity("Group removed").build();
                     } else {
                         return Response.status(401).entity("You are not a group admin.").build();
@@ -160,7 +163,7 @@ public class GroupsResource {
         }
     }
 
-    //Leave group
+    //Method that removes the user specified via the Authentication header from a group
     @DELETE
     @Path("/{groupid}/leave")
     public Response leaveGroup(@PathParam("groupid") int groupid, @Context HttpHeaders headers) {
@@ -235,6 +238,10 @@ public class GroupsResource {
                 if (authResult) {
                     if (groupdao.getGroup(groupID).getUserlist().containsKey(myID)) {
                         Group g = groupdao.getGroup(groupID);
+                        /*
+                        The @Produces annotation does not support maps or ConcurrentSkipListMaps so the 
+                       admin hashmap has to be "converted" into an arraylist for parsing XML
+                         */
                         ArrayList returnarray = new ArrayList<User>();
                         for (Map.Entry<Integer, User> entry : g.getGroupAdmins().entrySet()) {
                             returnarray.add(entry.getValue());
@@ -269,8 +276,6 @@ public class GroupsResource {
                     if (groupdao.getGroup(groupID).getGroupAdmins().containsKey(myID)) {
                         if (!groupdao.getGroup(groupID).getGroupAdmins().containsKey(userID)) {
                             groupdao.promoteToAdmin(groupID, userID);
-                            System.out.println("User promoted");
-                            System.out.println(groupdao.getGroup(groupID).getGroupAdmins().keySet());
                             return Response.status(200).entity("User " + userID + " promoted to admin in " + groupID).build();
                         } else {
                             return Response.status(409).entity("User " + userID + " is already an admin").build();
@@ -300,7 +305,7 @@ public class GroupsResource {
                 if (authResult) {
                     if (groupdao.getGroup(groupID).getGroupAdmins().containsKey(myID)) {
                         if (groupdao.getGroup(groupID).getGroupAdmins().containsKey(userID)) {
-                            groupdao.demoteFromADmin(groupID, userdao.getUser(userID));
+                            groupdao.demoteFromAdmin(groupID, userdao.getUser(userID));
                             return Response.status(200).entity("User " + userID + " added to group " + groupID).build();
                         } else {
                             return Response.status(409).entity("User " + userID + " is not an admin").build();
@@ -335,6 +340,10 @@ public class GroupsResource {
                 if (authResult) {
                     if (groupdao.getGroup(groupID).getUserlist().containsKey(myID)) {
                         Group g = groupdao.getGroup(groupID);
+                        /*
+                        The @Produces annotation does not support maps or ConcurrentSkipListMaps so the 
+                       user hashmap has to be "converted" into an arraylist for parsing XML
+                         */
                         ArrayList returnarray = new ArrayList<User>();
                         for (Map.Entry<Integer, User> entry : g.getUserlist().entrySet()) {
                             returnarray.add(entry.getValue());
@@ -357,7 +366,6 @@ public class GroupsResource {
         }
     }
 
-    
     @DELETE
     @Path("/{groupid}/users/{userid}")
     public Response removeUserFromGroup(@PathParam("groupid") int groupID, @PathParam("userid") int userID, @Context HttpHeaders headers) {
@@ -390,19 +398,10 @@ public class GroupsResource {
             return Response.status(404).entity("User or group not found.").build();
         }
     }
-    /*
-    //Useless?
-    @GET
-    @Path("/{groupid}/users/{userid}")
-    @Produces(MediaType.APPLICATION_XML)
-    public User getGroupUser(@PathParam("groupid") int groupID, @PathParam("userid") int userID) {
-        if (groupdao.getGroups().containsKey(groupID) && userdao.getUsers().containsKey(userID)) {
-            return groupdao.getGroup(groupID).getUserlist().get(userID);
-        } else {
-            return null;
-        }
-    } */
 
+    /*
+    Method for creating new messages.
+     */
     @POST
     @Path("/{groupid}/users/{userid}/messages")
     public Response createNewMessage(@PathParam("groupid") int groupID, @PathParam("userid") int userID, @FormParam("message") String msg, @Context HttpHeaders headers) {
@@ -491,6 +490,9 @@ public class GroupsResource {
         }
     }
 
+    /*
+    Returns the latest message (the message with the highest ID) from a group
+     */
     @GET
     @Path("/{groupid}/messages/latest")
     public Response getLatestMessage(@PathParam("groupid") int groupID, @Context HttpHeaders headers) {

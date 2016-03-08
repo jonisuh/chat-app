@@ -1,7 +1,17 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ This is the GroupDao class. It is in charge of creating, reading, updating and deleting Group objects.
+The class is also in charge of creating and reading message objects.
+
+This class implements the singleton design pattern
+
+GroupDao has two ConcurrentSkipListMaps that contain all the groups in the system and all the messages in the system.
+ConcurrentSkipListMap is used for a thread safe collection that acts like a TreeMap.
+
+When the object is initialized, the object makes two method calls to load the saved objects from files and saves them to
+the ConcurrentSkipListMaps.
+
+This class also uses an instance of the UserDao, mainly for saving the users to the file whenever a group is updated.
+
  */
 package ModelPackage;
 
@@ -15,131 +25,129 @@ import java.io.ObjectOutputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.TreeMap;
 import java.util.concurrent.ConcurrentSkipListMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-/**
- *
- * @author Joni
- */
+
 public class GroupDao {
-    private ConcurrentSkipListMap<Integer,Group> allgroups;
-    private ConcurrentSkipListMap<Integer,Message> allmessages;
+
+    private ConcurrentSkipListMap<Integer, Group> allgroups;
+    private ConcurrentSkipListMap<Integer, Message> allmessages;
     private final UserDao userdao;
-    
-    
-    private GroupDao(){
-        /*
-        this.allgroups = loadGroups();
-        this.allmessages = loadMessages();
-        */
+
+    private GroupDao() {
         this.allgroups = loadGroups();
         this.allmessages = loadMessages();
         this.userdao = UserDao.getInstance();
     }
-    
+
+    //Singleton
     public static GroupDao getInstance() {
-       return GroupSingleton.INSTANCE;
+        return GroupSingleton.INSTANCE;
     }
+
     private static class GroupSingleton {
+
         private static final GroupDao INSTANCE = new GroupDao();
     }
 
-    private void saveGroups(){
+    //Saves the map containing all groups to a groups.ser file in the modelpackage
+    private void saveGroups() {
         try {
-                URL url = this.getClass().getClassLoader().getResource("ModelPackage/groups.ser");
-                File f = new File(url.toURI());
-                FileOutputStream out = new FileOutputStream(f);
-                ObjectOutputStream obout = new ObjectOutputStream(out);
-                obout.writeObject(this.allgroups);
-                obout.close();
+            URL url = this.getClass().getClassLoader().getResource("ModelPackage/groups.ser");
+            File f = new File(url.toURI());
+            FileOutputStream out = new FileOutputStream(f);
+            ObjectOutputStream obout = new ObjectOutputStream(out);
+            obout.writeObject(this.allgroups);
+            obout.close();
         } catch (FileNotFoundException e) {
-                System.out.println("Could not open groups.ser");
-                e.printStackTrace();
+            System.out.println("Could not open groups.ser");
+            e.printStackTrace();
         } catch (IOException e) {
-                System.out.println("Error writing into file");
-        }catch (URISyntaxException e) {
-                 e.printStackTrace();
+            System.out.println("Error writing into file");
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
         }
     }
-    
-    private ConcurrentSkipListMap<Integer, Group> loadGroups(){
-        ConcurrentSkipListMap<Integer,Group> groupmap = null;
+
+    //Loads the ConcurrentSkipListMap containing all groups from the groups.ser file
+    private ConcurrentSkipListMap<Integer, Group> loadGroups() {
+        ConcurrentSkipListMap<Integer, Group> groupmap = null;
         try {
-                URL url = this.getClass().getClassLoader().getResource("ModelPackage/groups.ser");
-                File f = new File(url.toURI());
-                FileInputStream in = new FileInputStream(f);
-                ObjectInputStream obin = new ObjectInputStream(in);
-                groupmap = (ConcurrentSkipListMap<Integer,Group>)obin.readObject();
-                obin.close();
+            URL url = this.getClass().getClassLoader().getResource("ModelPackage/groups.ser");
+            File f = new File(url.toURI());
+            FileInputStream in = new FileInputStream(f);
+            ObjectInputStream obin = new ObjectInputStream(in);
+            groupmap = (ConcurrentSkipListMap<Integer, Group>) obin.readObject();
+            obin.close();
         } catch (FileNotFoundException e) {
-                System.out.println("Could not open groups.ser");
-                e.printStackTrace();
+            System.out.println("Could not open groups.ser");
+            e.printStackTrace();
         } catch (IOException e) {
-                System.out.println("Error reading file");
-                return new ConcurrentSkipListMap<Integer,Group>();
+            System.out.println("Error reading file");
+            return new ConcurrentSkipListMap<Integer, Group>();
         } catch (ClassNotFoundException e) {
-                System.out.println("Error reading object");
-                e.printStackTrace();
-        }catch (URISyntaxException e) {
-                 e.printStackTrace();
+            System.out.println("Error reading object");
+            e.printStackTrace();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
         }
         return groupmap;
     }
-    private void saveMessages(){
+
+    //Saves the map containing all messages to a messages.ser file in the modelpackage
+    private void saveMessages() {
         try {
-                URL url = this.getClass().getClassLoader().getResource("ModelPackage/messages.ser");
-                File f = new File(url.toURI());
-                FileOutputStream out = new FileOutputStream(f);
-                ObjectOutputStream obout = new ObjectOutputStream(out);
-                obout.writeObject(this.allmessages);
-                obout.close();
+            URL url = this.getClass().getClassLoader().getResource("ModelPackage/messages.ser");
+            File f = new File(url.toURI());
+            FileOutputStream out = new FileOutputStream(f);
+            ObjectOutputStream obout = new ObjectOutputStream(out);
+            obout.writeObject(this.allmessages);
+            obout.close();
         } catch (FileNotFoundException e) {
-                System.out.println("Could not open messages.ser");
-                e.printStackTrace();
+            System.out.println("Could not open messages.ser");
+            e.printStackTrace();
         } catch (IOException e) {
-                System.out.println("Error writing into file");
+            System.out.println("Error writing into file");
         } catch (URISyntaxException e) {
-                 e.printStackTrace();
+            e.printStackTrace();
         }
     }
-    
-    private ConcurrentSkipListMap<Integer, Message> loadMessages(){
-        ConcurrentSkipListMap<Integer,Message> messagemap = null;
+
+    //Loads the ConcurrentSkipListMap containing all messages from the messages.ser file
+    private ConcurrentSkipListMap<Integer, Message> loadMessages() {
+        ConcurrentSkipListMap<Integer, Message> messagemap = null;
         try {
-                URL url = this.getClass().getClassLoader().getResource("ModelPackage/messages.ser");
-                File f = new File(url.toURI());
-                FileInputStream in = new FileInputStream(f);
-                ObjectInputStream obin = new ObjectInputStream(in);
-                messagemap = (ConcurrentSkipListMap<Integer,Message>)obin.readObject();
-                obin.close();
+            URL url = this.getClass().getClassLoader().getResource("ModelPackage/messages.ser");
+            File f = new File(url.toURI());
+            FileInputStream in = new FileInputStream(f);
+            ObjectInputStream obin = new ObjectInputStream(in);
+            messagemap = (ConcurrentSkipListMap<Integer, Message>) obin.readObject();
+            obin.close();
         } catch (FileNotFoundException e) {
-                System.out.println("Could not open messages.ser");
-                e.printStackTrace();
+            System.out.println("Could not open messages.ser");
+            e.printStackTrace();
         } catch (IOException e) {
-                System.out.println("Error reading file");
-                return new ConcurrentSkipListMap<Integer,Message>();
+            System.out.println("Error reading file");
+            return new ConcurrentSkipListMap<Integer, Message>();
         } catch (ClassNotFoundException e) {
-                System.out.println("Error reading object");
-                e.printStackTrace();
-        }catch (URISyntaxException e) {
-                 e.printStackTrace();
+            System.out.println("Error reading object");
+            e.printStackTrace();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
         }
         return messagemap;
     }
-    
+
     /*
-    Creates a new group and puts the user who created the group in the admin and user list
-    */
-    public int createGroup(String groupname, User starter){
-        if(groupname.length() <= 50 && groupname.length() > 0 && groupname != null && !groupname.equals(" ")){
-            System.out.println("New group created");
-            int groupID ;
-            if(this.allgroups.isEmpty()){
+    Creates a new group, adds it to the allgroups map, puts the group started User object in the newly created groups
+    user and admin HashMaps, and finally saves the objects to the .ser file
+     */
+    public int createGroup(String groupname, User starter) {
+        if (groupname.length() <= 50 && groupname.length() > 0 && groupname != null && !groupname.equals(" ")) {
+            
+            int groupID;
+            if (this.allgroups.isEmpty()) {
                 groupID = 0;
-            }else{
+            } else {
                 groupID = allgroups.lastKey() + 1;
             }
             Group g = new Group(groupname, groupID);
@@ -150,111 +158,115 @@ public class GroupDao {
             saveGroups();
             userdao.saveUsers();
             return groupID;
-        }else{
+        } else {
             return 0;
         }
-        
+
     }
+
     /*
-    Adds user to groups userlist and the group to users grouplist
-    */
-    public void addUserToGroup(int groupID, User u){
+    Adds a user object into a group objects user HashMap and vice versa, adds the group object into the user objects group HashMap
+     */
+    public void addUserToGroup(int groupID, User u) {
         Group g = allgroups.get(groupID);
         g.addUser(u);
         u.addGroup(g);
-        
+
         userdao.saveUsers();
         saveGroups();
     }
+
     /*
-    This method removes a user from a group specified by the groupID and then removes the group from the users group list
-    Additionally if the user is an admin in the group it also removes the user from the groups admin list
-    */
-    public void removeUserFromGroup(int groupID, int userID){
-       Group g = allgroups.get(groupID);
-       User user = userdao.getUser(userID);
-       
-       g.removeUser(user.getUserID());
-       user.removeGroup(g.getGroupID());
-       
-       if(g.getGroupAdmins().containsKey(user.getUserID())){
-           g.removeAdmin(user.getUserID());
-       }
-       saveGroups();
-       userdao.saveUsers();
+    This method removes an user from a group specified by the groupID and then removes the group from the users group map
+    Additionally if the user is an admin in the group it also removes the user from the groups admin map
+     */
+    public void removeUserFromGroup(int groupID, int userID) {
+        Group g = allgroups.get(groupID);
+        User user = userdao.getUser(userID);
+
+        g.removeUser(user.getUserID());
+        user.removeGroup(g.getGroupID());
+
+        if (g.getGroupAdmins().containsKey(user.getUserID())) {
+            g.removeAdmin(user.getUserID());
+        }
+        saveGroups();
+        userdao.saveUsers();
     }
-    
-    public void promoteToAdmin(int groupID, int userID){
+
+    //Puts a user object in to the groups admin HashMap
+    public void promoteToAdmin(int groupID, int userID) {
         Group g = allgroups.get(groupID);
         User u = userdao.getUser(userID);
-        if(g.getUserlist().containsKey(userID)){
+        if (g.getUserlist().containsKey(userID)) {
             g.addAdmin(u);
         }
         saveGroups();
         userdao.saveUsers();
     }
-    public void demoteFromADmin(int groupID, User u){
+
+    //Removes a user from the admin HashMap
+    public void demoteFromAdmin(int groupID, User u) {
         Group g = allgroups.get(groupID);
-        if(g.getGroupAdmins().containsValue(u)){
+        if (g.getGroupAdmins().containsValue(u)) {
             g.removeAdmin(u.getUserID());
         }
     }
-    public String updateGroup(int groupID, String groupname){
-        if(groupname.length() <= 16 && groupname.length() > 0 && groupname != null && !groupname.equals(" ")){
+
+    //Updates an existing group and changes its name
+    public String updateGroup(int groupID, String groupname) {
+        if (groupname.length() <= 16 && groupname.length() > 0 && groupname != null && !groupname.equals(" ")) {
             Group g = allgroups.get(groupID);
             g.setGroupName(groupname);
-            
+
             saveGroups();
             userdao.saveUsers();
             return "Groupname updated.";
-        }else{
+        } else {
             return "Failed";
         }
-        
+
     }
+
     /*
     Return all the groups
-    */
-    public ConcurrentSkipListMap<Integer, Group> getGroups(){
-        
+     */
+    public ConcurrentSkipListMap<Integer, Group> getGroups() {
         return allgroups;
     }
+
     /*
     Returns a group specified by the group id
-    */
-    public Group getGroup(int groupID){
+     */
+    public Group getGroup(int groupID) {
         return allgroups.get(groupID);
     }
+
     /*
     Creates a new message and saves it into users and a groups history
-    */
-    public void createMessage(int userID, int groupID, String msg){
-        if(msg.length() <= 500 && msg.length() > 0 && !msg.equals("") && msg != null){
+     */
+    public void createMessage(int userID, int groupID, String msg) {
+        if (msg.length() <= 500 && msg.length() > 0 && !msg.equals("") && msg != null) {
+            //Gets the current date and time
             Date timestamp = new Date();
             int messageID;
-            if(this.allmessages.isEmpty()){
+            //Calculates the unique messageID
+            if (this.allmessages.isEmpty()) {
                 messageID = 0;
-            }else{
+            } else {
                 messageID = allmessages.lastKey() + 1;
             }
-            
-        
-            
+
             Message message = new Message(userID, groupID, messageID, msg, timestamp);
 
             userdao.getUser(userID).addMessage(message);
             allgroups.get(groupID).addMessage(message);
             allmessages.put(messageID, message);
-            System.out.println("Created message "+message.getMessageID()+" into group "+message.getGroupID()+" by user "+message.getUserID()+" MSG: "+message.getMessage());
 
             saveGroups();
             userdao.saveUsers();
             saveMessages();
         }
     }
-    /*
-    public HashMap<Integer, Message> getGroupMessages(int groupID){
-        return allgroups.get(groupID).getGroupmessages();
-    }
-    */
+
 }

@@ -32,7 +32,6 @@ $(document).ready(function () {
                 $(".usernamespan").html(userName);
             }
         });
-        //$("#userlist").html(" ");
 
         $.ajax({
             type: "GET",
@@ -97,13 +96,13 @@ $(document).ready(function () {
                     var thisEmail = $(this).find("email").text();
                     var thisDepartment = $(this).find("department").text();
                     var thisTitle = $(this).find("title").text();
-                    
+
                     var userInfoButton = "<span class='loadMoreUserInfo'>▼</span>";
                     if (parseInt(thisuserID) === parseInt(userID)) {
                         thisuserName = "Me";
                         userInfoButton = "";
                     }
-                    $("#usersWrapper").append("<div class='usercontainer' id='user_" + thisuserID + "'><h3>" + thisuserName+"</h3>"+userInfoButton+"<br><br></div>");
+                    $("#usersWrapper").append("<div class='usercontainer' id='user_" + thisuserID + "'><h3>" + thisuserName + "</h3>" + userInfoButton + "<br><br></div>");
 
                     $("#user_" + thisuserID).append("<div class='userinformation' id='user_" + thisuserID + "_info'>\n\
                     <hr><p>" + thisfirstName + "</p>\n\
@@ -120,7 +119,7 @@ $(document).ready(function () {
 
         $("#placeholder").attr("id", userID);
     }
-    
+
     $("#message").on('input', function () {
 
         while ($("#message").val().length > 500) {
@@ -252,13 +251,13 @@ $(document).ready(function () {
                             var thisEmail = $(this).find("email").text();
                             var thisDepartment = $(this).find("department").text();
                             var thisTitle = $(this).find("title").text();
-                            
+
                             var userInfoButton = "<span class='loadMoreUserInfo'>▼</span>";
                             if (parseInt(thisuserID) === parseInt(userID)) {
                                 thisuserName = "Me";
                                 userInfoButton = "";
                             }
-                            $("#userlist").append("<div class='usercontainer' id='user_" + thisuserID + "'><h3>" + thisuserName+"</h3>"+userInfoButton+"<br><br></div>");
+                            $("#userlist").append("<div class='usercontainer' id='user_" + thisuserID + "'><h3>" + thisuserName + "</h3>" + userInfoButton + "<br><br></div>");
                             $("#user_" + thisuserID).append("<div class='userinformation' id='user_" + thisuserID + "_info'>\n\
                             <hr><p>" + thisfirstName + "</p>\n\
                             <p>" + thislastName + "</p>\n\
@@ -316,7 +315,7 @@ $(document).ready(function () {
                 websocket = new WebSocket(wsUri);
 
                 websocket.onopen = function (event) {
-                    //onOpen(event);
+                   
                 };
                 websocket.onmessage = function (event) {
                     onMessage(event);
@@ -409,22 +408,19 @@ $(document).ready(function () {
                     $('messageroot', messages).each(function () {
                         var messageID = $(this).find("messageID").text();
                         if (parseInt(messageID) > parseInt(latestMessage)) {
+                            
                             var timestamp = formatTimestamp($(this).find("timestamp").text());
                             var senderName = $(this).find("username").text();
                             var senderID = $(this).find("userID").text();
                             var message = $(this).find("message").text();
-                            //Getting the username
                             var senderName = $(this).find("username").text();
-                            //Getting the username
                             var messageclasses = "message";
 
                             if (senderID === userID) {
                                 messageclasses = "message mymessage"
                                 senderName = "Me";
                             }
-                            /* var newMessage = $("<div class='" + messageclasses + "' id='message_" + messageID + "'><p>" + message + "</p><p>" + senderName + " <span class='timestamp'>" + timestamp + "</span></p></div>").hide();
-                             $("#messageSpace").append(newMessage);
-                             newMessage.show("slow"); */
+                            
                             $("#messageSpace").append("<div class='" + messageclasses + "' id='message_" + messageID + "'><p>" + escapeHtml(message) + "</p><p>" + escapeHtml(senderName) + " <span class='timestamp'>" + timestamp + "</span></p></div>");
                         }
                     });
@@ -472,7 +468,6 @@ $(document).ready(function () {
         return splitDate[2] + "." + splitDate[1] + " " + splitTime[0] + ":" + splitTime[1];
 
     }
-
 
     function escapeHtml(string) {
         var entityMap = {
@@ -620,13 +615,13 @@ $(document).ready(function () {
                                     var thisEmail = $(user).find("email").text();
                                     var thisDepartment = $(user).find("department").text();
                                     var thisTitle = $(this).find("title").text();
-                                    
+
                                     var userInfoButton = "<span class='loadMoreUserInfo'>▼</span>";
                                     if (parseInt(thisuserID) === parseInt(userID)) {
                                         thisuserName = "Me";
                                         userInfoButton = "";
                                     }
-                                    $("#userlist").append("<div class='usercontainer' id='user_" + thisuserID + "'><h3>" + thisuserName+"</h3>"+userInfoButton+"<br><br></div>");
+                                    $("#userlist").append("<div class='usercontainer' id='user_" + thisuserID + "'><h3>" + thisuserName + "</h3>" + userInfoButton + "<br><br></div>");
                                     $("#user_" + thisuserID).append("<div class='userinformation' id='user_" + thisuserID + "_info'>\n\
                                     <hr><p>" + thisfirstName + "</p>\n\
                                     <p>" + thislastName + "</p>\n\
@@ -635,7 +630,7 @@ $(document).ready(function () {
                                     <p>" + thisEmail + "</p><hr>\n\
                                     <div class='startChatWithUser userInfoButton' id='startWithUser_" + thisuserID + "'><img src='pictures/newchat.png' alt='New chat' title='New chat' height='20' width='20'></div>\n\
                                     </div>");
-                                    
+
                                     if ($.inArray(thisuserID, adminIDArray) > -1) {
                                         $("#user_" + thisuserID + " h3").append("<span style='float: right;'>A</span>");
                                     }
@@ -881,7 +876,7 @@ $(document).ready(function () {
                 , success: function () {
                     $("#promoteUser_" + clickedUserID).hide("slow").remove();
                     $("#uInfoPromoteUser_" + clickedUserID).remove();
-                    $("#user_"+clickedUserID+" h3").after("<div class='adminIcon'><img src='pictures/admin.png' alt='Admin' title='Admin' height='15' width='15'></div>");
+                    $("#user_" + clickedUserID + " h3").after("<div class='adminIcon'><img src='pictures/admin.png' alt='Admin' title='Admin' height='15' width='15'></div>");
                 }
             });
         }
@@ -1037,10 +1032,10 @@ $(document).ready(function () {
         var newFname = $('#myInfoFname').val();
         var newLname = $('#myInfoLname').val();
         var newEmail = $('#myInfoEmail').val();
-        
+
         var validInformation = true;
         if (!newUsername) {
-            
+
             validInformation = false;
         }
         if (newUsername.length > 16) {
@@ -1069,7 +1064,7 @@ $(document).ready(function () {
             $("#confirmationPassword").focus();
             validInformation = false;
         }
-        
+
         if (validInformation === true) {
             $.ajax({
                 type: "PUT",
@@ -1132,46 +1127,46 @@ $(document).ready(function () {
             $("#changePassword").css("border-color", "#6394cf");
         }
     });
-    
-    $("#showSearch").click(function(){
+
+    $("#showSearch").click(function () {
         $("#searchInput").val("");
         $("#searchBox").slideToggle("fast");
     });
-    
+
     $("#searchInput").on('input', function () {
         var searchterm = $(this).val().toLowerCase();
-        if(searchterm){
-            $(".usercontainer").each(function(){
+        if (searchterm) {
+            $(".usercontainer").each(function () {
                 var info = [];
                 info.push($(this).find("h3").text().toLowerCase());
-                
-                $(this).find("p").each(function(){
+
+                $(this).find("p").each(function () {
                     info.push($(this).text().toLowerCase());
                 });
-                
+
                 //Checking if searchterm is contained in user info
                 var stringInInfo = false;
-                
-                for (var i = 0; i < info.length ; i++) {
-                    if(info[i].indexOf(searchterm) > -1){
+
+                for (var i = 0; i < info.length; i++) {
+                    if (info[i].indexOf(searchterm) > -1) {
                         stringInInfo = true;
                     }
                 }
-                
-                if(stringInInfo === true){
+
+                if (stringInInfo === true) {
                     $(this).show(200);
-                }else{
+                } else {
                     $(this).hide(200);
                 }
             });
-        }else{
-             $(".usercontainer").show();
+        } else {
+            $(".usercontainer").show();
         }
     });
-    
-    
-    
-    
+
+
+
+
     $('#grouplist').bind('scroll', chk_scroll);
     function chk_scroll(e)
     {

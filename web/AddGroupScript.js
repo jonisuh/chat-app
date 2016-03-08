@@ -23,115 +23,109 @@ $(document).ready(function () {
             }
         });
         $("#createGroup").show();
-        
+
     });
-    
-    $(document).on('click', '.startChatWithUser',function(){
+
+    $(document).on('click', '.startChatWithUser', function () {
         var thisUserID = $(this).attr("id");
         var idSplit = thisUserID.split("_");
         var selectedUserID = idSplit[1];
-        var groupname = $("#user_"+selectedUserID+" h3").clone().children().remove().end().text();
-        groupname = groupname +", "+$(".usernamespan").text();
+        var groupname = $("#user_" + selectedUserID + " h3").clone().children().remove().end().text();
+        groupname = groupname + ", " + $(".usernamespan").text();
         var chatExists = false;
-        
-      /*  $(".group").each(function(){
-            if($(this).children("h3").text() === groupname){
-                $(this).click();
-                chatExists = true;
-            }
-        }); */
-        
-        if(chatExists === false){
+
+
+        if (chatExists === false) {
             $.ajax({
                 type: "POST",
                 url: "/ProjectV1/API/Groups/",
-                data: {groupname:groupname,groupstarterID:myID},
-                headers:{
+                data: {groupname: groupname, groupstarterID: myID},
+                headers: {
                     "Authorization": basicCredentials
-                },success: function (createdGroupID) {
-                       $.ajax({
-                            type: "POST",
-                            url: "/ProjectV1/API/Groups/"+createdGroupID+"/users/",
-                            data: {userID:selectedUserID},
-                            headers:{
-                                "Authorization": basicCredentials
-                            },success: function () {
-                                $("#noGroupsFound").remove();
-                                $("#groupWrapper").append("<div class='group' id='group_" + createdGroupID + "'><h3>" + groupname + "</h3><span class='moreGroupInfo'>▼</span></div>");
-                                $("#group_" + createdGroupID).append("<div class='groupInformation' id='group_" + createdGroupID + "_info'><hr>\n\
+                }, success: function (createdGroupID) {
+                    $.ajax({
+                        type: "POST",
+                        url: "/ProjectV1/API/Groups/" + createdGroupID + "/users/",
+                        data: {userID: selectedUserID},
+                        headers: {
+                            "Authorization": basicCredentials
+                        }, success: function () {
+                            $("#noGroupsFound").remove();
+                            $("#groupWrapper").append("<div class='group' id='group_" + createdGroupID + "'><h3>" + groupname + "</h3><span class='moreGroupInfo'>▼</span></div>");
+                            $("#group_" + createdGroupID).append("<div class='groupInformation' id='group_" + createdGroupID + "_info'><hr>\n\
                                 <div class='leaveThisGroupButton userInfoButton' id='leaveGroup_" + createdGroupID + "'><img src='pictures/leave.png' alt='Leave group' title='Leave group' height='20' width='20'></div>\n\
                                 </div>");
-                            
-                                var thisGroupAdmins = [];
-                                //checking if user is admin of this group
-                                $.ajax({
-                                    type: "GET",
-                                    url: "/ProjectV1/API/Groups/" + createdGroupID + "/admins/",
-                                    dataType: 'xml',
-                                    headers: {
-                                        "Authorization": basicCredentials
-                                    },
-                                    success: function (admins) {
-                                        $('user', admins).each(function () {
-                                            thisGroupAdmins.push($(this).find("userID").text());
-                                        });
 
-                                        if ($.inArray(myID, thisGroupAdmins) > -1) {
-                                            $("#group_" + createdGroupID + "_info").append("<div class='deleteThisGroupButton userInfoButton' id='deleteGroup_" + createdGroupID + "'><img src='pictures/deletegroup.png' alt='Delete group' title='Delete group' height='20' width='20'></div>");
-                                        }
+                            var thisGroupAdmins = [];
+                            //checking if user is admin of this group
+                            $.ajax({
+                                type: "GET",
+                                url: "/ProjectV1/API/Groups/" + createdGroupID + "/admins/",
+                                dataType: 'xml',
+                                headers: {
+                                    "Authorization": basicCredentials
+                                },
+                                success: function (admins) {
+                                    $('user', admins).each(function () {
+                                        thisGroupAdmins.push($(this).find("userID").text());
+                                    });
+
+                                    if ($.inArray(myID, thisGroupAdmins) > -1) {
+                                        $("#group_" + createdGroupID + "_info").append("<div class='deleteThisGroupButton userInfoButton' id='deleteGroup_" + createdGroupID + "'><img src='pictures/deletegroup.png' alt='Delete group' title='Delete group' height='20' width='20'></div>");
                                     }
-                                });
-                                $("#group_"+createdGroupID+" h3").click();
-                            }
-                        });    
+                                }
+                            });
+                            $("#group_" + createdGroupID + " h3").click();
+                        }
+                    });
 
                 }
 
             });
         }
     });
-    
+
     $(document).on('click', '.newGroupUser', function () {
         var divID = $(this).attr("id");
         var idSplit = divID.split("_");
         var selectedUserID = idSplit[1];
-        if(parseInt(selectedUserID) != parseInt(myID)){
+        if (parseInt(selectedUserID) != parseInt(myID)) {
             $(this).toggleClass('selectedContainer');
         }
     });
-    
-    $("#createNewGroup").click(function(){
+
+    $("#createNewGroup").click(function () {
         var groupname = $("#newGroupName").val();
-        
+
         $.ajax({
             type: "POST",
             url: "/ProjectV1/API/Groups/",
-            data: {groupname:groupname,groupstarterID:myID},
-            headers:{
+            data: {groupname: groupname, groupstarterID: myID},
+            headers: {
                 "Authorization": basicCredentials
-            },success: function (createdGroupID) {
-               $('.selectedContainer').each(function(i, obj) {
-                   var divID = $(this).attr("id");
-                   var idSplit = divID.split("_");
-                   var thisuserID = idSplit[1];
-                   $.ajax({
+            }, success: function (createdGroupID) {
+                $('.selectedContainer').each(function (i, obj) {
+                    var divID = $(this).attr("id");
+                    var idSplit = divID.split("_");
+                    var thisuserID = idSplit[1];
+                    $.ajax({
                         type: "POST",
-                        url: "/ProjectV1/API/Groups/"+createdGroupID+"/users/",
-                        data: {userID:thisuserID},
-                        headers:{
+                        url: "/ProjectV1/API/Groups/" + createdGroupID + "/users/",
+                        data: {userID: thisuserID},
+                        headers: {
                             "Authorization": basicCredentials
-                        },success: function () {
-                            
+                        }, success: function () {
+
                         }
-                    });    
+                    });
                 });
-                setTimeout(function() {
-                   $(".selectedContainer").toggleClass('selectedContainer');
-                   $("#createGroup").hide();
+                setTimeout(function () {
+                    $(".selectedContainer").toggleClass('selectedContainer');
+                    $("#createGroup").hide();
                 }, 100);
                 $("#noGroupsFound").remove();
                 $("#groupWrapper").append("<div class='group' id='group_" + createdGroupID + "'><h3>" + groupname + "</h3><span class='moreGroupInfo'>▼</span></div>");
-                
+
                 $("#group_" + createdGroupID).append("<div class='groupInformation' id='group_" + createdGroupID + "_info'><hr>\n\
                 <div class='leaveThisGroupButton userInfoButton' id='leaveGroup_" + createdGroupID + "'><img src='pictures/hide.png' alt='Leave group' title='Leave group' height='20' width='20'></div>\n\
                 </div>");
@@ -156,9 +150,9 @@ $(document).ready(function () {
                     }
                 });
             }
-            
+
         });
-        
+
     });
 
 });
